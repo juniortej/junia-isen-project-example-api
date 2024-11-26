@@ -1,11 +1,14 @@
-FROM python:3.10
+FROM golang:1.23
 
 WORKDIR /app
 
-COPY . .
+COPY go.mod go.sum ./
+RUN go mod download
 
-RUN pip install -r requirements.txt
+COPY .. .
 
-EXPOSE 5000
+RUN CGO_ENABLED=0 GOOS=linux go build -o backend
 
-CMD ["python", "app.py"]
+EXPOSE 8080
+
+CMD ["/app/shop-app"]
