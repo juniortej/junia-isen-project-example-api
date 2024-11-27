@@ -17,6 +17,11 @@ variable "resource_group_name" {
   }
 }
 
+variable "unique_suffix" {
+  description = "Unique suffix for resource naming"
+  type        = string
+}
+
 variable "project_name" {
   description = "Project name used for resource naming"
   type        = string

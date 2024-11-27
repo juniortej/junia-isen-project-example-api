@@ -1,43 +1,66 @@
 #!/bin/bash
 
-INFRA_DIR="infrastructure"
+# Exit immediately if a command exits with a non-zero status
+set -e
 
-GREEN='\033[0;32m'
-RED='\033[0;31m'
-YELLOW='\033[0;33m'
-NC='\033[0m'
-
-error_exit() {
-  echo -e "${RED}✖ $1${NC}"
+# Ensure that the .env file exists
+if [ -f .env ]; then
+  echo "Loading environment variables from .env file..."
+  export $(grep -v '^#' .env | xargs)
+else
+  echo ".env file not found. Please create a .env file with the required environment variables."
   exit 1
-}
-
-
-success_message() {
-  echo -e "${GREEN}✔ $1${NC}"
-}
-
-if ! command -v terraform &>/dev/null; then
-  error_exit "Terraform n'est pas installé. Veuillez l'installer avant de continuer."
 fi
 
-cd "$INFRA_DIR" || error_exit "Le dossier $INFRA_DIR est introuvable."
+echo "Navigating to the 'infrastructure' directory..."
+cd infrastructure
 
-echo -e "${YELLOW}Initialisation de Terraform...${NC}"
-terraform init || error_exit "Échec de l'initialisation de Terraform."
+echo "Formatting Terraform files..."
+terraform fmt
 
-echo -e "${YELLOW}Validation de la configuration Terraform...${NC}"
-terraform validate || error_exit "La validation Terraform a échoué."
+echo "Initializing Terraform..."
+terraform init
 
-echo -e "${YELLOW}Formatage des fichiers Terraform...${NC}"
-terraform fmt -recursive || error_exit "Échec du formatage des fichiers Terraform."
+echo "Validating Terraform configuration..."
+terraform validate
 
-echo -e "${YELLOW}Génération du plan Terraform...${NC}"
-terraform plan -out=tfplan || error_exit "Échec de la génération du plan Terraform."
+echo "Planning Terraform deployment..."
+terraform plan -out=tfplan
 
-echo -e "${YELLOW}Application du plan Terraform...${NC}"
-terraform apply -auto-approve tfplan || error_exit "Échec de l'application du plan Terraform."
+echo "Applying Terraform deployment..."
+terraform apply tfplan
 
-rm -f tfplan
+echo "Cleaning up..."
+rm tfplan
 
-success_message "Déploiement terminé avec succès."
+echo "Fetching Terraform outputs and updating .env file..."
+cd ..
+
+# Retrieve outputs from Terraform
+POSTGRES_HOST=$(terraform -chdir=infrastructure output -raw postgresql_server_fqdn)
+POSTGRES_DB=$(terraform -chdir=infrastructure output -raw postgresql_database_name)
+POSTGRES_USER=$(terraform -chdir=infrastructure output -raw postgresql_administrator_login)
+POSTGRES_PORT=5432  # Default PostgreSQL port
+
+# Use the existing admin password from the environment variable
+if [ -z "$TF_VAR_admin_password" ]; then
+  echo "Error: TF_VAR_admin_password is not set in the .env file."
+  exit 1
+fi
+POSTGRES_PASSWORD="$TF_VAR_admin_password"
+
+echo "Updating .env file with database connection details..."
+
+# Update the .env file
+cat > .env <<EOL
+TF_VAR_admin_password=$TF_VAR_admin_password
+TF_VAR_admin_username=$POSTGRES_USER
+
+POSTGRES_HOST=$POSTGRES_HOST
+POSTGRES_DB=$POSTGRES_DB
+POSTGRES_USER=${POSTGRES_USER}@${POSTGRES_HOST}
+POSTGRES_PASSWORD=$POSTGRES_PASSWORD
+POSTGRES_PORT=$POSTGRES_PORT
+EOL
+
+echo "Deployment completed successfully!"

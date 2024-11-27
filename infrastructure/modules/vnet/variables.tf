@@ -8,6 +8,11 @@ variable "location" {
   }
 }
 
+variable "unique_suffix" {
+  description = "Unique suffix for resource naming"
+  type        = string
+}
+
 variable "resource_group_name" {
   description = "Resource group where the VNet will be created"
   type        = string

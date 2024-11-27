@@ -1,20 +1,17 @@
-resource "random_string" "unique_suffix" {
-  length  = 6
-  upper   = false
-  special = false
-}
+# modules/vnet/vnet.tf
 
+# Create the Virtual Network
 resource "azurerm_virtual_network" "main" {
-  name                = "${var.project_name}-vnet-${random_string.unique_suffix.result}"
+  name                = "${var.project_name}-vnet-${var.unique_suffix}"
   location            = var.location
   resource_group_name = var.resource_group_name
   address_space       = var.address_space
-
-  tags = var.tags
+  tags                = var.tags
 }
 
+# Create the Database Subnet
 resource "azurerm_subnet" "db_subnet" {
-  name                 = "db-subnet-${random_string.unique_suffix.result}"
+  name                 = "db-subnet-${var.unique_suffix}"
   resource_group_name  = var.resource_group_name
   virtual_network_name = azurerm_virtual_network.main.name
   address_prefixes     = [var.db_subnet_prefix]
@@ -28,21 +25,21 @@ resource "azurerm_subnet" "db_subnet" {
   }
 
   service_endpoints = ["Microsoft.Storage", "Microsoft.KeyVault"]
-
 }
 
+# Create the Application Subnet
 resource "azurerm_subnet" "app_subnet" {
-  name                 = "app-subnet-${random_string.unique_suffix.result}"
+  name                 = "app-subnet-${var.unique_suffix}"
   resource_group_name  = var.resource_group_name
   virtual_network_name = azurerm_virtual_network.main.name
   address_prefixes     = [var.app_subnet_prefix]
 
   service_endpoints = ["Microsoft.Storage"]
-
 }
 
+# Create the Network Security Group for the Database Subnet
 resource "azurerm_network_security_group" "db_nsg" {
-  name                = "db-nsg-${random_string.unique_suffix.result}"
+  name                = "db-nsg-${var.unique_suffix}"
   location            = var.location
   resource_group_name = var.resource_group_name
 
@@ -61,8 +58,9 @@ resource "azurerm_network_security_group" "db_nsg" {
   tags = var.tags
 }
 
+# Create the Network Security Group for the Application Subnet
 resource "azurerm_network_security_group" "app_nsg" {
-  name                = "app-nsg-${random_string.unique_suffix.result}"
+  name                = "app-nsg-${var.unique_suffix}"
   location            = var.location
   resource_group_name = var.resource_group_name
 
@@ -93,11 +91,13 @@ resource "azurerm_network_security_group" "app_nsg" {
   tags = var.tags
 }
 
+# Associate the NSG with the Database Subnet
 resource "azurerm_subnet_network_security_group_association" "db_nsg_association" {
   subnet_id                 = azurerm_subnet.db_subnet.id
   network_security_group_id = azurerm_network_security_group.db_nsg.id
 }
 
+# Associate the NSG with the Application Subnet
 resource "azurerm_subnet_network_security_group_association" "app_nsg_association" {
   subnet_id                 = azurerm_subnet.app_subnet.id
   network_security_group_id = azurerm_network_security_group.app_nsg.id
