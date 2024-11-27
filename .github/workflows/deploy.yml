@@ -1,0 +1,35 @@
+name: Deploy to Azure App Service
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set Commit SHA
+      id: sha
+      run: echo "COMMIT_SHA=${{ github.sha }}" >> $GITHUB_ENV
+
+    - name: Login to Docker Hub
+      run: |
+        echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
+
+    - name: Build and Push Docker Image
+      run: |
+        docker build -t guayben/shop-app:${{ github.sha }} ./api
+        docker push guayben/shop-app:${{ github.sha }}
+
+    - name: Deploy to Azure Web App
+      uses: azure/webapps-deploy@v2
+      with:
+        app-name: shop-app-service-cc-clemclem
+        slot-name: production
+        images: guayben/shop-app:${{ github.sha }}
+        publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
