@@ -1,6 +1,6 @@
 provider "azurerm" {
   features {}
-  subscription_id = "79f11903-d0db-47a2-acc8-ce9d9d3fa470"
+  subscription_id = var.subscription_id
 }
 
 terraform {
@@ -22,21 +22,33 @@ resource "azurerm_service_plan" "shop_app_plan" {
   name                = "shop-app-plan"
   location            = azurerm_resource_group.shop_app_rg.location
   resource_group_name = azurerm_resource_group.shop_app_rg.name
-  os_type             = "Windows"
+  os_type             = "Linux"
   sku_name            = "B1"
 }
 
 
-resource "azurerm_windows_web_app" "shop_app_service" {
+resource "azurerm_linux_web_app" "shop_app_service" {
   depends_on = [azurerm_service_plan.shop_app_plan]
   name                = var.app_service_name
   location            = azurerm_resource_group.shop_app_rg.location
   resource_group_name = azurerm_resource_group.shop_app_rg.name
-  service_plan_id = azurerm_service_plan.shop_app_plan.id
+  service_plan_id     = azurerm_service_plan.shop_app_plan.id
   timeouts {
     create = "1m"
   }
-  site_config{}
+
+  site_config {
+    always_on = "true"  
+
+    application_stack {
+      docker_registry_url       = "https://index.docker.io/v1/"
+      docker_registry_username = var.docker_registry_username
+      docker_registry_password = var.docker_registry_password
+      docker_image_name = "guayben/shop-app:latest"
+    }  
+  }
+
+  client_affinity_enabled = false
 }
 
 
@@ -71,5 +83,4 @@ resource "azurerm_cosmosdb_sql_container" "shop_app_container" {
   partition_key_paths  = ["/partitionKey"]
   throughput          = 400
 }
-
 

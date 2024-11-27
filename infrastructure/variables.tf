@@ -14,5 +14,8 @@ variable "database_name" {
   default = "shop-app-cc-junia-db"
 }
 
+variable "docker_registry_username" {} 
+variable "docker_registry_password" {}
+variable "subscription_id" {}
 
 
