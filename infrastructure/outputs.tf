@@ -1,3 +1,13 @@
-output "app_service_url" {
-  value = azurerm_app_service.example.default_site_hostname
+# Resource Group Outputs
+
+output "resource_group_name" {
+  value       = module.resource_group.resource_group_name
+}
+
+output "resource_group_location" {
+  value       = module.resource_group.resource_group_location
+}
+
+output "resource_group_id" {
+  value       = module.resource_group.resource_group_id
 }
