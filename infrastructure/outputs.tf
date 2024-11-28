@@ -37,3 +37,27 @@ output "database_subnet_address_space" {
 output "database_subnet_id" {
   value       = module.virtual_network.database_subnet_id
 }
+
+# Database Outputs
+
+output "db_host" {
+  value       = module.database.db_host
+}
+
+output "db_port" {
+  value       = module.database.db_port
+}
+
+output "db_name" {
+  value       = module.database.db_name
+}
+
+output "db_admin_username" {
+  value       = module.database.db_admin_username
+  sensitive   = true
+}
+
+output "db_admin_password" {
+  value       = module.database.db_admin_password
+  sensitive   = true
+}

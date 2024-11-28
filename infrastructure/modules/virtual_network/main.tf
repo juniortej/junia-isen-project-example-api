@@ -18,4 +18,5 @@ resource "azurerm_subnet" "database_subnet" {
       actions = ["Microsoft.Network/virtualNetworks/subnets/action"]
     }
   }
+  depends_on = [azurerm_virtual_network.virtual_network]
 }
