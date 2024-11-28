@@ -1,0 +1,52 @@
+[
+    {
+        "id_item": 1,
+        "name": "Laptop",
+        "price": 999.99
+    },
+    {
+        "id_item": 2,
+        "name": "Smartphone",
+        "price": 599.99
+    },
+    {
+        "id_item": 3,
+        "name": "Headphones",
+        "price": 199.99
+    },
+    {
+        "id_item": 4,
+        "name": "Keyboard",
+        "price": 49.99
+    },
+    {
+        "id_item": 5,
+        "name": "Mouse",
+        "price": 29.99
+    },
+    {
+        "id_item": 6,
+        "name": "Monitor",
+        "price": 249.99
+    },
+    {
+        "id_item": 7,
+        "name": "External Hard Drive",
+        "price": 119.99
+    },
+    {
+        "id_item": 8,
+        "name": "USB-C Hub",
+        "price": 39.99
+    },
+    {
+        "id_item": 9,
+        "name": "Webcam",
+        "price": 89.99
+    },
+    {
+        "id_item": 10,
+        "name": "Bluetooth Speaker",
+        "price": 149.99
+    }
+]
