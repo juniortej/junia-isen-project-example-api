@@ -17,3 +17,17 @@ variable resource_group_location {
     type        = string
     default     = "France Central"
 }
+
+# Virtual Network Variables
+
+variable virtual_network_name {
+    description = "The name of the virtual network"
+    type        = string
+    default     = "vnet-atnmm"
+}
+
+variable virtual_network_address_space {
+    description = "The address space that is used by the virtual network"
+    type        = list(string)
+    default     = ["192.168.0.0/16"]
+}
