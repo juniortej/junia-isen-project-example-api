@@ -17,3 +17,13 @@ variable "resource_group_location" {
   description = "The location of the resource group"
   type        = string
 }
+
+variable "database_subnet_name" {
+  description = "The name of the database subnet"
+  type        = string
+}
+
+variable "database_subnet_address_space" {
+  description = "The address space that is used by the database subnet"
+  type        = list(string)
+}

@@ -25,3 +25,15 @@ output "virtual_network_address_space" {
 output "virtual_network_id" {
   value       = module.virtual_network.virtual_network_id
 }
+
+output "database_subnet_name" {
+  value       = module.virtual_network.database_subnet_name
+}
+
+output "database_subnet_address_space" {
+  value       = module.virtual_network.database_subnet_address_space
+}
+
+output "database_subnet_id" {
+  value       = module.virtual_network.database_subnet_id
+}

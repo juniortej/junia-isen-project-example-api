@@ -15,4 +15,7 @@ module "virtual_network" {
   resource_group_location       = module.resource_group.resource_group_location
   virtual_network_name          = var.virtual_network_name
   virtual_network_address_space = var.virtual_network_address_space
+
+  database_subnet_name          = var.database_subnet_name
+  database_subnet_address_space = var.database_subnet_address_space
 }
