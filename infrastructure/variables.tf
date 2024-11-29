@@ -94,6 +94,8 @@ variable server_name {
   default     = "shop-app-atnmm-srv"
 }
 
+# App Service Variables
+
 variable app_service_name {
   description = "The name of the App Service"
   type        = string
