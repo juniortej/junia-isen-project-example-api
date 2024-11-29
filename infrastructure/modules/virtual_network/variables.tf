@@ -27,3 +27,13 @@ variable "database_subnet_address_space" {
   description = "The address space that is used by the database subnet"
   type        = list(string)
 }
+
+variable "python_app_subnet_name" {
+  description = "The name of the Python app subnet"
+  type        = string
+}
+
+variable "python_app_subnet_address_space" {
+  description = "The address space that is used by the Python app subnet"
+  type        = list(string)
+}

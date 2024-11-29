@@ -27,3 +27,18 @@ output "database_subnet_id" {
   description = "Database Subnet ID: "
   value       = azurerm_subnet.database_subnet.id
 }
+
+output "python_app_subnet_name" {
+  description = "Python App Subnet Name: "
+  value       = azurerm_subnet.python_app_subnet.name
+}
+
+output "python_app_subnet_address_space" {
+  description = "Python App Subnet Address Space: "
+  value       = azurerm_subnet.python_app_subnet.address_prefixes
+}
+
+output "python_app_subnet_id" {
+  description = "Python App Subnet ID: "
+  value       = azurerm_subnet.python_app_subnet.id
+}
