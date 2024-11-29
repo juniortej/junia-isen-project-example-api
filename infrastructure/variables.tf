@@ -93,3 +93,21 @@ variable server_name {
   type        = string
   default     = "shop-app-atnmm-srv"
 }
+
+variable app_service_name {
+  description = "The name of the App Service"
+  type        = string
+  default     = "python-app-service"
+}
+
+variable app_service_plan_name {
+  description = "The name of the App Service Plan"
+  type        = string
+  default     = "python-app-service-plan"
+}
+
+variable app_service_sku {
+  description = "The SKU of the App Service Plan"
+  type        = string
+  default     = "B1"
+}
