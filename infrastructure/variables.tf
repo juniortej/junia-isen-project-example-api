@@ -44,6 +44,18 @@ variable database_subnet_address_space {
   default     = ["192.168.1.0/24"]
 }
 
+variable python_app_subnet_name {
+  description = "The name of the Python app subnet"
+  type        = string
+  default     = "python-app-subnet"
+}
+
+variable python_app_subnet_address_space {
+  description = "The address space that is used by the Python app subnet"
+  type        = list(string)
+  default     = ["192.168.2.0/24"]
+}
+
 # Database Variables
 
 variable dns_zone_name {
