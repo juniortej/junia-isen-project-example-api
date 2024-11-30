@@ -16,16 +16,20 @@ import (
 var GlobalDb *gorm.DB
 
 func ConnectDB() {
+	// Load environment variables
 	err := godotenv.Load()
 	if err != nil {
 		log.Fatal("Error loading .env file")
 	}
+
+	// Get database credentials from environment variables
 	dbuser := os.Getenv("POSTGRES_USER")
 	dbpwd := os.Getenv("POSTGRES_PASSWORD")
 	dbhost := os.Getenv("POSTGRES_HOST")
 	dbport := os.Getenv("POSTGRES_PORT")
 	dbname := os.Getenv("POSTGRES_DB")
 
+	// Build the DSN (Data Source Name)
 	dsn := fmt.Sprintf(
 		"host=%s user=%s password=%s dbname=%s port=%s sslmode=require TimeZone=Europe/Paris",
 		url.QueryEscape(dbhost),
@@ -34,26 +38,30 @@ func ConnectDB() {
 		url.QueryEscape(dbname),
 		url.QueryEscape(dbport),
 	)
+
+	// Open a connection to the database
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
-		panic(fmt.Sprintf("failed to connect database: %v", err))
+		log.Fatalf("Failed to connect to database: %v", err)
 	}
 
 	GlobalDb = db
 
+	// Ensure the uuid-ossp extension is available
 	err = ensureUUIDExtension(db)
 	if err != nil {
 		log.Fatalf("Error ensuring uuid-ossp extension: %v", err)
 	}
 
+	// Auto-migrate tables in the correct order
 	err = db.AutoMigrate(
-		&models.User{},
-		&models.Basket{},
-		&models.BasketItem{},
-		&models.Item{},
+		&models.User{},            
 		&models.ProductCategory{},
-		&models.Order{},
-		&models.OrderItem{},
+		&models.Item{},           
+		&models.Basket{},          
+		&models.BasketItem{},     
+		&models.Order{},           
+		&models.OrderItem{},       
 	)
 	if err != nil {
 		log.Fatalf("Error during migration: %v", err)
