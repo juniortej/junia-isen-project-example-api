@@ -1,3 +1,5 @@
+# outputs.tf
+
 output "resource_group_name" {
   description = "The name of the Resource Group"
   value       = azurerm_resource_group.main.name
@@ -41,4 +43,9 @@ output "postgresql_database_name" {
 output "postgresql_administrator_login" {
   description = "The administrator login for the PostgreSQL server"
   value       = module.database.postgresql_administrator_login
+}
+
+output "vpn_gateway_public_ip" {
+  description = "The public IP address of the VPN Gateway"
+  value       = module.vpn_gateway.vpn_gateway_public_ip
 }

@@ -1,3 +1,5 @@
+# modules/database/outputs.tf
+
 output "postgresql_server_name" {
   description = "The name of the PostgreSQL Flexible Server"
   value       = azurerm_postgresql_flexible_server.main.name

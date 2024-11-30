@@ -1,0 +1,50 @@
+name: Go CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    name: Validate and Test Go Code
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: 1.23.1
+
+    - name: Install dependencies
+      run: |
+        cd shop-app
+        go mod tidy
+
+    - name: Run gofmt
+      run: |
+        gofmt -w ./shop-app  # Corrected command for formatting Go code
+
+    - name: Run golangci-lint
+      uses: golangci/golangci-lint-action@v3
+      with:
+        version: v1.54.2  # Latest stable version
+        args: |
+          --out-format tab
+        working-directory: shop-app
+
+    - name: Run Go tests
+      run: |
+        cd shop-app
+        go test ./... -v -cover  # Includes test coverage
+
+    - name: Build the application
+      run: |
+        cd shop-app
+        go build -o app .

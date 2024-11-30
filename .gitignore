@@ -1,2 +1,12 @@
 *project_structure.json
 *.env
+./certs
+
+*.tfstate
+*.tfstate.backup
+*.tfvars
+.terraform/
+
+*.out
+*.exe
+*.log

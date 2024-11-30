@@ -2,7 +2,7 @@ services:
   backend:
     build:
       context: ./shop-app
-      dockerfile: Docker/Dockerfile
+      dockerfile: Dockerfile
     restart: always
     ports:
       - "5000:8000"  

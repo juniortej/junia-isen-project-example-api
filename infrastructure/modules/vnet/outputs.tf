@@ -1,3 +1,5 @@
+# modules/vnet/outputs.tf
+
 output "vnet_id" {
   description = "The ID of the Virtual Network"
   value       = azurerm_virtual_network.main.id
@@ -6,6 +8,11 @@ output "vnet_id" {
 output "vnet_name" {
   description = "The name of the Virtual Network"
   value       = azurerm_virtual_network.main.name
+}
+
+output "vnet_address_space" {
+  description = "The address space of the Virtual Network"
+  value       = azurerm_virtual_network.main.address_space
 }
 
 output "db_subnet_id" {
@@ -18,22 +25,7 @@ output "db_subnet_name" {
   value       = azurerm_subnet.db_subnet.name
 }
 
-output "app_subnet_id" {
-  description = "The ID of the Application Subnet"
-  value       = azurerm_subnet.app_subnet.id
-}
-
-output "app_subnet_name" {
-  description = "The name of the Application Subnet"
-  value       = azurerm_subnet.app_subnet.name
-}
-
-output "db_nsg_id" {
-  description = "The ID of the Database Network Security Group"
-  value       = azurerm_network_security_group.db_nsg.id
-}
-
-output "app_nsg_id" {
-  description = "The ID of the Application Network Security Group"
-  value       = azurerm_network_security_group.app_nsg.id
+output "gateway_subnet_id" {
+  description = "The ID of the Gateway Subnet"
+  value       = azurerm_subnet.gateway_subnet.id
 }

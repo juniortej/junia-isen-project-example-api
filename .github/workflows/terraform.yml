@@ -1,0 +1,50 @@
+name: Terraform CI/CD
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  terraform:
+    name: Validate and Deploy Terraform
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Install Terraform
+      uses: hashicorp/setup-terraform@v2
+      with:
+        terraform_version: 1.6.0
+
+    - name: Run terraform fmt
+      run: terraform -chdir=infrastructure fmt -check -recursive
+
+    - name: Run terraform validate
+      run: terraform -chdir=infrastructure validate
+
+    - name: Terraform Plan
+      env:
+        TF_VAR_admin_password: ${{ secrets.ADMIN_PASSWORD }}
+        TF_VAR_admin_username: ${{ secrets.ADMIN_USERNAME }}
+        TF_VAR_database_name: ${{ secrets.DATABASE_NAME }}
+        TF_VAR_vpn_client_root_certificate_public_cert_data: ${{ secrets.VPN_CERT }}
+      run: |
+        terraform -chdir=infrastructure init
+        terraform -chdir=infrastructure plan -out=tfplan
+
+    # Uncomment for real deployment
+    # - name: Terraform Apply
+    #   if: github.ref == 'refs/heads/staging'
+    #   env:
+    #     TF_VAR_admin_password: ${{ secrets.ADMIN_PASSWORD }}
+    #     TF_VAR_admin_username: ${{ secrets.ADMIN_USERNAME }}
+    #     TF_VAR_database_name: ${{ secrets.DATABASE_NAME }}
+    #     TF_VAR_vpn_client_root_certificate_public_cert_data: ${{ secrets.VPN_CERT }}
+    #   run: |
+    #     terraform -chdir=infrastructure apply -auto-approve

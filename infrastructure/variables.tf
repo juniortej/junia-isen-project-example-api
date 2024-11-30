@@ -1,49 +1,54 @@
+# variables.tf
+
 variable "location" {
   description = "Azure region for the resources"
   type        = string
-  default     = "France Central"
-  validation {
-    condition     = contains(["France Central", "West Europe", "North Europe"], var.location)
-    error_message = "The location must be one of 'France Central', 'West Europe', or 'North Europe'."
-  }
+  default     = "francecentral"
 }
 
 variable "project_name" {
   description = "Name of the project"
   type        = string
   default     = "junia-shop2024"
-  validation {
-    condition     = length(var.project_name) > 0
-    error_message = "Project name cannot be empty."
-  }
+}
+
+variable "database_name" {
+  description = "Name of the PostgreSQL database"
+  type        = string
+  default     = "app_db"
 }
 
 variable "admin_username" {
   description = "Administrator username for PostgreSQL server"
   type        = string
-  default     = "Amiche"
-  validation {
-    condition     = length(var.admin_username) > 3
-    error_message = "Administrator username must be at least 4 characters."
-  }
+  default     = "postgres_admin"
 }
 
 variable "admin_password" {
   description = "Administrator password for PostgreSQL server"
   type        = string
   sensitive   = true
-  validation {
-    condition     = length(var.admin_password) >= 8
-    error_message = "Administrator password must be at least 8 characters."
-  }
 }
 
 variable "environment" {
   description = "Environment tag (e.g., dev, staging, prod)"
   type        = string
   default     = "dev"
-  validation {
-    condition     = contains(["dev", "staging", "prod"], var.environment)
-    error_message = "Environment must be one of 'dev', 'staging', or 'prod'."
-  }
+}
+
+variable "vpn_client_address_pool" {
+  description = "Address pool for VPN clients"
+  type        = list(string)
+  default     = ["172.16.0.0/16"]
+}
+
+variable "vnet_address_space" {
+  description = "Address space of the Virtual Network"
+  type        = list(string)
+  default     = ["10.0.0.0/16"]
+}
+
+variable "vpn_client_root_certificate_public_cert_data" {
+  description = "Public certificate data for VPN client authentication in base64 encoding"
+  type        = string
 }
