@@ -13,7 +13,7 @@ import (
 var SecretKey = "your-secret-key"
 
 // In-memory database simulation
-var users = map[string]string{} 
+var users = map[string]string{}
 
 // Register endpoint for user registration
 func Register(c *gin.Context) {

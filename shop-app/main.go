@@ -1,8 +1,8 @@
 package main
 
 import (
-	"shop-app/api/controllers"
-	"shop-app/api/middleware"
+	"github.com/Amiche02/junia-isen-project-example-api/shop-app/api/controllers"
+	"github.com/Amiche02/junia-isen-project-example-api/shop-app/api/middleware"
 
 	"github.com/gin-gonic/gin"
 )
@@ -19,5 +19,5 @@ func main() {
 	protected.GET("/baskets", controllers.BasketsHandler)
 	protected.GET("/users", controllers.UsersHandler)
 
-	r.Run(":8080") 
+	r.Run(":8080")
 }
