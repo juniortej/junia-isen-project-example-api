@@ -74,6 +74,7 @@ variable database_admin_username {
   description = "The username of the database admin"
   type        = string
   sensitive   = true
+  default     = "adminuser" // Utiliser un nom d'utilisateur valide
 }
 
 variable database_admin_password {
@@ -91,7 +92,7 @@ variable database_name {
 variable server_name {
   description = "The name of the database server"
   type        = string
-  default     = "shop-app-atnmm-srv"
+  default     = "unique-shop-app-srv"
 }
 
 # App Service Variables
@@ -99,7 +100,7 @@ variable server_name {
 variable app_service_name {
   description = "The name of the App Service"
   type        = string
-  default     = "python-app-service"
+  default     = "bondon-grousseau-mallet-plot-python-app-service"
 }
 
 variable app_service_plan_name {
@@ -112,4 +113,16 @@ variable app_service_sku {
   description = "The SKU of the App Service Plan"
   type        = string
   default     = "B1"
+}
+
+variable python_version {
+  description = "The version of Python to use in the App Service"
+  type        = string
+  default     = "PYTHON|3.8" // Utiliser une syntaxe correcte pour la version de Python
+}
+
+variable terraform_python_version {
+  description = "The version of Python to use for Terraform"
+  type        = string
+  default     = "3.8"
 }

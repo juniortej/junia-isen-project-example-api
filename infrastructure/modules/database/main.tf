@@ -41,26 +41,3 @@ resource "azurerm_postgresql_flexible_server_firewall_rule" "allow_webapp" {
   start_ip_address    = "192.168.2.0"
   end_ip_address      = "192.168.2.255"
 }
-
-# Populate the database with the initdb.sql in /resources/database/initdb.sql
-resource "null_resource" "init_db" {
-
-  provisioner "local-exec" {
-    on_failure = fail 
-    environment = {
-      PGPASSWORD = var.database_admin_password
-    }
-    command = <<EOT
-      psql -h ${azurerm_postgresql_flexible_server.database_server.fqdn} \
-        -U ${azurerm_postgresql_flexible_server.database_server.administrator_login} \
-        -d ${azurerm_postgresql_flexible_server_database.database.name} \
-        -f ${path.module}/../../../resources/database/initdb.sql";
-    EOT
-  }
-
-  depends_on = [
-    azurerm_postgresql_flexible_server.database_server,
-    azurerm_postgresql_flexible_server_database.database,
-    azurerm_postgresql_flexible_server_firewall_rule.allow_webapp
-  ]
-}
