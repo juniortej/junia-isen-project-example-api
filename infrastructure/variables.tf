@@ -92,11 +92,18 @@ variable database_name {
 variable server_name {
   description = "The name of the database server"
   type        = string
-  default     = "unique-shop-app-srv"
+  default     = "shop-app-atnmm-srv"
+}
+
+# Blob Storage Variables
+variable storage_account_name {
+  description = "The name of the storage account"
+  type        = string
+  default     = null
 }
 
 # App Service Variables
-
+/*
 variable app_service_name {
   description = "The name of the App Service"
   type        = string
@@ -125,4 +132,11 @@ variable terraform_python_version {
   description = "The version of Python to use for Terraform"
   type        = string
   default     = "3.8"
+}
+*/
+
+locals {
+  blob_storage = {
+    name = "blobstorageatnmm"
+  }
 }

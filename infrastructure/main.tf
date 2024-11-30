@@ -37,6 +37,14 @@ module "database" {
   server_name               = var.server_name
 }
 
+module "blob_storage" {
+  source              = "./modules/blob_storage"
+  resource_group_name = module.resource_group.resource_group_name
+  resource_group_location   = module.resource_group.resource_group_location
+  storage_account_name = local.blob_storage.name
+}
+
+/*
 resource "azurerm_app_service_plan" "app_service_plan" {
   name                = var.app_service_plan_name
   location            = var.resource_group_location
@@ -58,4 +66,4 @@ resource "azurerm_app_service" "app_service" {
   site_config {
     linux_fx_version = "PYTHON|3.8"
   }
-}
+}*/
