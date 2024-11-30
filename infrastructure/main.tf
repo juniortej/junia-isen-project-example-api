@@ -18,6 +18,9 @@ module "virtual_network" {
 
   database_subnet_name          = var.database_subnet_name
   database_subnet_address_space = var.database_subnet_address_space
+
+  python_app_subnet_name        = var.python_app_subnet_name
+  python_app_subnet_address_space = var.python_app_subnet_address_space
 }
 
 module "database" {
