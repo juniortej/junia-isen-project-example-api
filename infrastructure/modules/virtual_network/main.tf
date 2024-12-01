@@ -26,6 +26,18 @@ resource "azurerm_subnet" "python_app_subnet" {
   resource_group_name  = var.resource_group_name
   virtual_network_name = azurerm_virtual_network.virtual_network.name
   address_prefixes     = var.python_app_subnet_address_space
+
   service_endpoints    = ["Microsoft.Storage"]
+
+  # Délégation pour App Service
+  delegation {
+    name = "appServiceDelegation"
+    service_delegation {
+      name = "Microsoft.Web/serverFarms"
+      actions = [
+        "Microsoft.Network/virtualNetworks/subnets/action",
+      ]
+    }
+  }
   depends_on = [azurerm_virtual_network.virtual_network]
 }

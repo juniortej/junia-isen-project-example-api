@@ -3,6 +3,11 @@ provider "azurerm" {
   subscription_id = var.subscription_id
 }
 
+# Permet de récupérer l'adresse IP publique de l'utilisateur
+data "http" "ip" {
+  url = "https://api.ipify.org"
+}
+
 module "resource_group" {
   source                    = "./modules/resource_group"
   resource_group_name       = var.resource_group_name
@@ -35,6 +40,7 @@ module "database" {
   database_admin_password   = var.database_admin_password
   database_name             = var.database_name
   server_name               = var.server_name
+  ip_authorized             = data.http.ip.body
 }
 
 module "blob_storage" {
@@ -42,6 +48,8 @@ module "blob_storage" {
   resource_group_name = module.resource_group.resource_group_name
   resource_group_location   = module.resource_group.resource_group_location
   storage_account_name = local.blob_storage.name
+  storage_subnet_id    = module.virtual_network.python_app_subnet_id
+  ip_authorized             = data.http.ip.body
 }
 
 /*

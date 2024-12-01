@@ -41,3 +41,10 @@ resource "azurerm_postgresql_flexible_server_firewall_rule" "allow_webapp" {
   start_ip_address    = "192.168.2.0"
   end_ip_address      = "192.168.2.255"
 }
+
+resource "azurerm_postgresql_flexible_server_firewall_rule" "allow_client" {
+  name                = "AllowClient"
+  server_id           = azurerm_postgresql_flexible_server.database_server.id
+  start_ip_address    = var.ip_authorized
+  end_ip_address      = var.ip_authorized
+}

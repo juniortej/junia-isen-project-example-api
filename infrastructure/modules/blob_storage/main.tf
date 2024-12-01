@@ -4,6 +4,12 @@ resource "azurerm_storage_account" "storage_account" {
   location                 = var.resource_group_location
   account_tier             = "Standard"
   account_replication_type = "LRS"
+
+  network_rules {
+    default_action             = "Deny"
+    ip_rules                   = [var.ip_authorized]
+    virtual_network_subnet_ids = [var.storage_subnet_id]
+  }
 }
 
 resource "azurerm_storage_container" "storage_container" {

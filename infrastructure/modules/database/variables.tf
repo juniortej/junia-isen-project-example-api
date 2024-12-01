@@ -49,3 +49,8 @@ variable "server_name" {
   description = "The name of the database server"
   type        = string
 }
+
+variable "ip_authorized" {
+  description = "The IP address that is authorized to access the database"
+  type        = string
+}
