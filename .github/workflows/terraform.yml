@@ -27,7 +27,9 @@ jobs:
     #   working-directory: infrastructure
 
     - name: Run terraform validate
-      run: terraform validate
+      run: |
+        terraform init
+        terraform validate
       working-directory: infrastructure
 
     - name: Terraform Plan
@@ -37,7 +39,6 @@ jobs:
         TF_VAR_database_name: ${{ secrets.DATABASE_NAME }}
         TF_VAR_vpn_client_root_certificate_public_cert_data: ${{ secrets.VPN_CERT }}
       run: |
-        terraform init
         terraform plan -out=tfplan
       working-directory: infrastructure
 
