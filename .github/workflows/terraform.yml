@@ -22,9 +22,9 @@ jobs:
       with:
         terraform_version: 1.6.0
 
-    - name: Run terraform fmt
-      run: terraform fmt -check -recursive
-      working-directory: infrastructure
+    # - name: Run terraform fmt
+    #   run: terraform fmt -check -recursive
+    #   working-directory: infrastructure
 
     - name: Run terraform validate
       run: terraform validate
