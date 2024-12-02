@@ -23,10 +23,12 @@ jobs:
         terraform_version: 1.6.0
 
     - name: Run terraform fmt
-      run: terraform -chdir=infrastructure fmt -check -recursive
+      run: terraform fmt -check -recursive
+      working-directory: infrastructure
 
     - name: Run terraform validate
-      run: terraform -chdir=infrastructure validate
+      run: terraform validate
+      working-directory: infrastructure
 
     - name: Terraform Plan
       env:
@@ -35,10 +37,11 @@ jobs:
         TF_VAR_database_name: ${{ secrets.DATABASE_NAME }}
         TF_VAR_vpn_client_root_certificate_public_cert_data: ${{ secrets.VPN_CERT }}
       run: |
-        terraform -chdir=infrastructure init
-        terraform -chdir=infrastructure plan -out=tfplan
+        terraform init
+        terraform plan -out=tfplan
+      working-directory: infrastructure
 
-    # Uncomment for real deployment
+    # real deployment
     # - name: Terraform Apply
     #   if: github.ref == 'refs/heads/staging'
     #   env:
@@ -47,4 +50,5 @@ jobs:
     #     TF_VAR_database_name: ${{ secrets.DATABASE_NAME }}
     #     TF_VAR_vpn_client_root_certificate_public_cert_data: ${{ secrets.VPN_CERT }}
     #   run: |
-    #     terraform -chdir=infrastructure apply -auto-approve
+    #     terraform apply -auto-approve
+    #   working-directory: infrastructure
