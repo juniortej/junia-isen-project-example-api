@@ -67,6 +67,12 @@ module "app_service" {
   subnet_id = module.virtual_network.python_app_subnet_id
 
   app_settings = {
-    STORAGE_BLOB_URL = module.blob_storage.storage_url
+    STORAGE_BLOB_URL  = module.blob_storage.storage_url
+    
+    DATABASE_HOST     = module.database.db_host
+    DATABASE_PORT     = module.database.db_port
+    DATABASE_NAME     = module.database.db_name
+    DATABASE_USERNAME = module.database.db_admin_username
+    DATABASE_PASSWORD = module.database.db_admin_password
   }
 }

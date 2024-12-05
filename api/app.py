@@ -9,13 +9,20 @@ from azure.storage.blob import BlobServiceClient
 
 app = Flask(__name__)
 
+def get_env_variable(key, default=None):
+    # Fetches the value of an environment variable.
+    try:
+        return os.environ.get(key, default)
+    except KeyError:
+        raise Exception(f"Environment variable {key} not set")
+    
 # Database connection configuration
 DB_CONFIG = {
-    "dbname": "cloud-api-project",
-    "user": "postgres",
-    "password": "postgres",
-    "host": "localhost",  # Adjust if running elsewhere
-    "port": 5432
+    "dbname": get_env_variable("DATABASE_NAME"),
+    "user": get_env_variable("DATABASE_USERNAME"),
+    "password": get_env_variable("DATABASE_PASSWORD"),
+    "host": get_env_variable("DATABASE_HOST"),  
+    "port": get_env_variable("DATABASE_PORT", "5432")
 }
 
 def get_db_connection():
@@ -26,41 +33,11 @@ def get_db_connection():
     except Exception as e:
         raise Exception(f"Database connection failed: {e}")
 
-def get_env_variable(key, default=None):
-    # Fetches the value of an environment variable.
-    try:
-        return os.environ.get(key, default)
-    except KeyError:
-        raise Exception(f"Environment variable {key} not set")
-
 @app.route("/")
 def home():
     return jsonify({"message": "Welcome to the Shop API!"})
 
-"""
-@app.route("/items")
-def items():
-    try:
-        # Définir le chemin vers le fichier JSON
-        json_file_path = os.path.join(os.path.dirname(__file__), "../resources/blob_storage/items.json")
-        
-        # Lire le contenu du fichier JSON
-        with open(json_file_path, "r") as json_file:
-            items_data = json.load(json_file)
-        
-        # Retourner les données JSON comme réponse
-        return app.response_class(
-            response=json.dumps(items_data, indent=4),
-            mimetype='application/json'
-        )
-    except FileNotFoundError:
-        return jsonify({"error": "File not found"}), 404
-    except json.JSONDecodeError:
-        return jsonify({"error": "Invalid JSON format"}), 500
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
 
-"""
 @app.route("/items")
 def items():
     try:
@@ -92,9 +69,12 @@ def baskets():
         baskets = cursor.fetchall()
         
         # Format the result as JSON and fetch items data
-        items_file_path = os.path.join(os.path.dirname(__file__), "../resources/blob_storage/items.json")
-        with open(items_file_path, "r") as items_file:
-            items_data = json.load(items_file)
+        account_url = get_env_variable("STORAGE_BLOB_URL")
+        default_credential = DefaultAzureCredential()
+        blob_service_client = BlobServiceClient(account_url, credential=default_credential)
+        
+        container_client = blob_service_client.get_container_client(container="api")
+        items_data = json.loads(container_client.download_blob("items.json").readall())
             
         baskets_data = []
         for basket in baskets:
