@@ -80,12 +80,6 @@ output "storage_url" {
 }
 
 # App Service Outputs
-/*
-output "app_service_name" {
-  value       = azurerm_app_service.app_service.name
+output "url" {
+  value       = module.app_service.url
 }
-
-output "app_service_default_hostname" {
-  value       = azurerm_app_service.app_service.default_site_hostname
-}
-*/

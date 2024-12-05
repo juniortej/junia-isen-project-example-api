@@ -59,6 +59,9 @@ module "app_service" {
   app_service_name = var.app_service_name
   app_service_plan_name = var.app_service_plan_name
 
+  docker_image = "mariedevulder/cloud_computing_api_project:feat-database-and-blob"
+  docker_registry_url = "https://ghcr.io"
+
   subnet_id = module.virtual_network.python_app_subnet_id
 
   app_settings = {
