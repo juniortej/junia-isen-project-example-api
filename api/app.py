@@ -71,12 +71,9 @@ def items():
         container_client = blob_service_client.get_container_client(container="api")
         items = json.loads(container_client.download_blob("items.json").readall())
         
-        return app.response_class(
-            response=json.dumps(items, indent=4),
-            mimetype='application/json'
-        )
+        return {"items": items}
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        return jsonify({"erreur": str(e)}), 500
 
 
 @app.route("/baskets")
