@@ -32,10 +32,88 @@ def get_db_connection():
         return conn
     except Exception as e:
         raise Exception(f"Database connection failed: {e}")
+    
+def init_db():
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # SQL script for schema creation and data insertion
+        sql_script = """
+        -- Création de la base de données
+        CREATE TABLE IF NOT EXISTS Users (
+            id_user SERIAL PRIMARY KEY,
+            firstname VARCHAR(100) NOT NULL,
+            lastname VARCHAR(100) NOT NULL
+        );
+
+        CREATE TABLE IF NOT EXISTS Baskets (
+            id_basket SERIAL PRIMARY KEY,
+            user_id INT NOT NULL REFERENCES Users(id_user) ON DELETE CASCADE,
+            items TEXT NOT NULL
+        );
+
+        -- Insertion de données
+        INSERT INTO Users (firstname, lastname) VALUES 
+        ('John', 'Doe'),
+        ('Jane', 'Doe'),
+        ('Alice', 'Smith'),
+        ('Bob', 'Smith')
+        ON CONFLICT DO NOTHING;
+
+        INSERT INTO Baskets (user_id, items) VALUES 
+        (1, '1,2,3'),
+        (2, '4,5,6'),
+        (3, '1,3,5'),
+        (4, '2,4,6')
+        ON CONFLICT DO NOTHING;
+        """
+        
+        # Execute the SQL script
+        cursor.execute(sql_script)
+        
+        # Commit the changes
+        conn.commit()
+        
+        # Close the connection
+        cursor.close()
+        conn.close()
+        
+        print("Database initialized successfully.")
+        
+    except Exception as e:
+        raise Exception(f"Database initialization failed: {e}")
+
 
 @app.route("/")
 def home():
-    return jsonify({"message": "Welcome to the Shop API!"})
+    try:
+        # Check if the database is already initialized
+        conn = get_db_connection()
+        cursor = conn.cursor()
+
+        # Query to check if the "Users" table exists and contains data
+        cursor.execute("SELECT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'users');")
+        table_exists = cursor.fetchone()[0]
+
+        if not table_exists:
+            # Initialize the database if the "Users" table does not exist
+            init_db()
+        else:
+            # Check if there are users in the table
+            cursor.execute("SELECT COUNT(*) FROM Users;")
+            user_count = cursor.fetchone()[0]
+            if user_count == 0:
+                init_db()
+
+        # Close the connection
+        cursor.close()
+        conn.close()
+        
+        return jsonify({"message": "Welcome to the Shop API!"})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 
 
 @app.route("/items")
