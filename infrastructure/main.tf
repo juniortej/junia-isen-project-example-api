@@ -52,26 +52,16 @@ module "blob_storage" {
   ip_authorized             = data.http.ip.body
 }
 
-/*
-resource "azurerm_app_service_plan" "app_service_plan" {
-  name                = var.app_service_plan_name
-  location            = var.resource_group_location
-  resource_group_name = var.resource_group_name
-  sku {
-    tier = "Basic"
-    size = var.app_service_sku
+module "app_service" {
+  source              = "./modules/app_service"
+  resource_group_name       = module.resource_group.resource_group_name
+  resource_group_location   = module.resource_group.resource_group_location
+  app_service_name = var.app_service_name
+  app_service_plan_name = var.app_service_plan_name
+
+  subnet_id = module.virtual_network.python_app_subnet_id
+
+  app_settings = {
+    STORAGE_BLOB_URL = module.blob_storage.storage_url
   }
 }
-
-resource "azurerm_app_service" "app_service" {
-  name                = var.app_service_name
-  location            = var.resource_group_location
-  resource_group_name = var.resource_group_name
-  app_service_plan_id = azurerm_app_service_plan.app_service_plan.id
-  app_settings = {
-    "WEBSITES_ENABLE_APP_SERVICE_STORAGE" = "false"
-  }
-  site_config {
-    linux_fx_version = "PYTHON|3.8"
-  }
-}*/

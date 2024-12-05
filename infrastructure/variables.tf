@@ -103,7 +103,7 @@ variable storage_account_name {
 }
 
 # App Service Variables
-/*
+
 variable app_service_name {
   description = "The name of the App Service"
   type        = string
@@ -116,24 +116,6 @@ variable app_service_plan_name {
   default     = "python-app-service-plan"
 }
 
-variable app_service_sku {
-  description = "The SKU of the App Service Plan"
-  type        = string
-  default     = "B1"
-}
-
-variable python_version {
-  description = "The version of Python to use in the App Service"
-  type        = string
-  default     = "PYTHON|3.8" // Utiliser une syntaxe correcte pour la version de Python
-}
-
-variable terraform_python_version {
-  description = "The version of Python to use for Terraform"
-  type        = string
-  default     = "3.8"
-}
-*/
 
 locals {
   blob_storage = {
