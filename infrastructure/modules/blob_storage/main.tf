@@ -18,6 +18,14 @@ resource "azurerm_storage_container" "storage_container" {
   container_access_type = "private"
 }
 
+resource "azurerm_role_assignment" "service_binding" {
+  scope                = azurerm_storage_container.storage_container.resource_manager_id
+  role_definition_name = "Storage Blob Data Reader"
+  principal_id         = var.app_service_principal_id
+
+  depends_on = [ azurerm_storage_container.storage_container ]
+}
+
 # On récupère le fichier items.json et on le stocke dans le blob storage
 resource "azurerm_storage_blob" "storage_blob" {
   name                   = "items.json"

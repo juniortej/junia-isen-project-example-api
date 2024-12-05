@@ -50,6 +50,8 @@ module "blob_storage" {
   storage_account_name = local.blob_storage.name
   storage_subnet_id    = module.virtual_network.python_app_subnet_id
   ip_authorized             = data.http.ip.body
+
+  app_service_principal_id = module.app_service.principal_id
 }
 
 module "app_service" {

@@ -23,3 +23,9 @@ variable "ip_authorized" {
   description = "The IP address that is authorized to access the storage account"
   type        = string
 }
+
+variable "app_service_principal_id" {
+  type        = string
+  default     = null
+  description = "The ID of the service principal that is used by the app service"
+}
