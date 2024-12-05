@@ -4,6 +4,9 @@ import os
 import json
 import psycopg2
 
+from azure.identity import DefaultAzureCredential
+from azure.storage.blob import BlobServiceClient
+
 app = Flask(__name__)
 
 # Database connection configuration
@@ -23,10 +26,18 @@ def get_db_connection():
     except Exception as e:
         raise Exception(f"Database connection failed: {e}")
 
+def get_env_variable(key, default=None):
+    # Fetches the value of an environment variable.
+    try:
+        return os.environ.get(key, default)
+    except KeyError:
+        raise Exception(f"Environment variable {key} not set")
+
 @app.route("/")
 def home():
     return jsonify({"message": "Welcome to the Shop API!"})
 
+"""
 @app.route("/items")
 def items():
     try:
@@ -49,6 +60,23 @@ def items():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+"""
+@app.route("/items")
+def items():
+    try:
+        account_url = get_env_variable("STORAGE_BLOB_URL")
+        default_credential = DefaultAzureCredential()
+        blob_service_client = BlobServiceClient(account_url, credential=default_credential)
+        
+        container_client = blob_service_client.get_container_client(container="api")
+        items = json.loads(container_client.download_blob("items.json").readall())
+        
+        return app.response_class(
+            response=json.dumps(items, indent=4),
+            mimetype='application/json'
+        )
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 
 @app.route("/baskets")
