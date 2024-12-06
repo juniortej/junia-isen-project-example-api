@@ -1,0 +1,8 @@
+# terraform.tfvars
+
+admin_username = "adminuser"
+admin_password = "securepassword"
+storage_account_name = "shopstorageacct"
+container_name = "appdata"
+resource_group_name = "shop-app-rg"
+location = "East US"
