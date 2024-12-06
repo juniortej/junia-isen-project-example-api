@@ -1,0 +1,22 @@
+name: CD
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Login to Azure
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+      - name: Build Docker image
+        run: |
+          docker build -t myapp .
+          docker push myregistry.azurecr.io/myapp
+      - name: Deploy to App Service
+        run: az webapp deploy --name shop-app --src-path .
