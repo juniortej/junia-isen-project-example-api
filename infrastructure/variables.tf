@@ -1,37 +1,29 @@
-variable "location" {
-  description = "The Azure region to deploy resources"
-  default     = "East US"
+variable "prefix" {
+  description = "Prefix for naming resources"
 }
 
 variable "resource_group_name" {
-  description = "Name of the Azure Resource Group"
+  description = "Name of the resource group"
   default     = "shop-app-rg"
 }
 
-variable "app_service_plan_name" {
-  description = "Name of the App Service Plan"
-  default     = "shop-app-plan"
+variable "location" {
+  description = "Azure region for resource deployment"
+  default     = "East US"
 }
 
-variable "app_service_plan_tier" {
-  description = "The pricing tier for the App Service Plan"
-  default     = "Basic"
+variable "admin_username" {
+  description = "Admin username for Azure Container Registry"
 }
 
-variable "app_service_plan_size" {
-  description = "The size of the App Service Plan"
-  default     = "B1"
+variable "admin_password" {
+  description = "Admin password for Azure Container Registry"
 }
 
-variable "app_service_name" {
-  description = "Name of the App Service"
-  default     = "shop-app"
+variable "sql_server_name" {
+  description = "Name of the SQL Server"
 }
 
-variable "docker_registry_username" {
-  description = "Username for the Docker registry"
-}
-
-variable "docker_registry_password" {
-  description = "Password for the Docker registry"
+variable "sql_database_name" {
+  description = "Name of the SQL Database"
 }
