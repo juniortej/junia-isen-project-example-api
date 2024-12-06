@@ -4,4 +4,4 @@ baskets_bp = Blueprint('baskets', __name__)
 
 @baskets_bp.route('/')
 def get_baskets():
-    return {"baskets": []}, 200  # Replace with database query
+    return {"baskets": []}, 200  

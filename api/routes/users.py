@@ -4,4 +4,4 @@ users_bp = Blueprint('users', __name__)
 
 @users_bp.route('/')
 def get_users():
-    return {"users": []}, 200  # Replace with database query
+    return {"users": []}, 200  
