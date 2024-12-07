@@ -1,6 +1,6 @@
 *project_structure.json
 *.env
-./certs
+certs
 
 *.tfstate
 *.tfstate.backup
@@ -10,3 +10,11 @@
 *.out
 *.exe
 *.log
+
+*.key
+*.pem
+*.crt
+
+certs/*.key
+certs/*.pem
+certs/*.crt

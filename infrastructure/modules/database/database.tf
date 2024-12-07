@@ -1,5 +1,3 @@
-# modules/database/database.tf
-
 resource "azurerm_postgresql_flexible_server" "main" {
   name                   = "${var.project_name}-postgresql-${var.unique_suffix}"
   resource_group_name    = var.resource_group_name

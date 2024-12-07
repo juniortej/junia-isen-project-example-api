@@ -1,5 +1,3 @@
-# modules/vnet/variables.tf
-
 variable "location" {
   description = "Azure region for the VNet"
   type        = string

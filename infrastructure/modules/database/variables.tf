@@ -1,5 +1,3 @@
-# modules/database/variables.tf
-
 variable "location" {
   description = "Azure region for the database"
   type        = string

@@ -1,6 +1,3 @@
-# modules/vnet/vnet.tf
-
-# Create the Virtual Network
 resource "azurerm_virtual_network" "main" {
   name                = "${var.project_name}-vnet-${var.unique_suffix}"
   location            = var.location
@@ -9,7 +6,6 @@ resource "azurerm_virtual_network" "main" {
   tags                = var.tags
 }
 
-# Create the Database Subnet
 resource "azurerm_subnet" "db_subnet" {
   name                 = "db-subnet-${var.unique_suffix}"
   resource_group_name  = var.resource_group_name
@@ -25,7 +21,6 @@ resource "azurerm_subnet" "db_subnet" {
   }
 }
 
-# Create the Application Subnet
 resource "azurerm_subnet" "app_subnet" {
   name                 = "app-subnet-${var.unique_suffix}"
   resource_group_name  = var.resource_group_name
@@ -33,7 +28,6 @@ resource "azurerm_subnet" "app_subnet" {
   address_prefixes     = [var.app_subnet_prefix]
 }
 
-# Create the Gateway Subnet
 resource "azurerm_subnet" "gateway_subnet" {
   name                 = "GatewaySubnet"
   resource_group_name  = var.resource_group_name
@@ -41,7 +35,6 @@ resource "azurerm_subnet" "gateway_subnet" {
   address_prefixes     = [var.gateway_subnet_prefix]
 }
 
-# Create the Network Security Group for the Database Subnet
 resource "azurerm_network_security_group" "db_nsg" {
   name                = "db-nsg-${var.unique_suffix}"
   location            = var.location

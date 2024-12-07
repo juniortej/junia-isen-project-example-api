@@ -1,5 +1,3 @@
-# modules/vpn_gateway/outputs.tf
-
 output "vpn_gateway_public_ip" {
   description = "The public IP address of the VPN Gateway"
   value       = azurerm_public_ip.vpn_gateway_ip.ip_address

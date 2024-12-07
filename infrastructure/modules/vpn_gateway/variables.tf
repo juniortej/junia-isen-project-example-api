@@ -1,5 +1,3 @@
-# modules/vpn_gateway/variables.tf
-
 variable "location" {
   description = "Azure region for the VPN Gateway"
   type        = string

@@ -1,13 +1,9 @@
-# main.tf
-
-# Generate a unique suffix for resource names
 resource "random_string" "unique_suffix" {
   length  = 6
   upper   = false
   special = false
 }
 
-# Create a resource group
 resource "azurerm_resource_group" "main" {
   name     = "${var.project_name}-rg-${random_string.unique_suffix.result}"
   location = var.location
@@ -18,7 +14,6 @@ resource "azurerm_resource_group" "main" {
   }
 }
 
-# Virtual Network Module
 module "vnet" {
   source              = "./modules/vnet"
   location            = var.location
@@ -40,7 +35,6 @@ module "vnet" {
   }
 }
 
-# Create a Private DNS Zone for PostgreSQL
 resource "azurerm_private_dns_zone" "postgres" {
   name                = "privatelink.postgres.database.azure.com"
   resource_group_name = azurerm_resource_group.main.name
@@ -55,7 +49,6 @@ resource "azurerm_private_dns_zone_virtual_network_link" "postgres_link" {
   registration_enabled  = false
 }
 
-# Database Module
 module "database" {
   source              = "./modules/database"
   location            = var.location
@@ -70,7 +63,6 @@ module "database" {
   database_name       = var.database_name
 }
 
-# VPN Gateway Module
 module "vpn_gateway" {
   source              = "./modules/vpn_gateway"
   location            = var.location

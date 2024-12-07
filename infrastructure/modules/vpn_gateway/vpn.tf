@@ -1,5 +1,3 @@
-# modules/vpn_gateway/vpn.tf
-
 resource "azurerm_public_ip" "vpn_gateway_ip" {
   name                = "${var.project_name}-vpn-pip-${var.unique_suffix}"
   location            = var.location
