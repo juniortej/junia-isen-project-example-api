@@ -24,6 +24,11 @@ variable "app_settings" {
   type = map(string)
 }
 
+variable "gateway_ip" {
+  description = "The IP address of the gateway"
+  type        = string
+}
+
 variable "subnet_id" {
   description = "The id of subnet"
   type        = string

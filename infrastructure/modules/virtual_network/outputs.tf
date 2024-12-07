@@ -42,3 +42,18 @@ output "python_app_subnet_id" {
   description = "Python App Subnet ID: "
   value       = azurerm_subnet.python_app_subnet.id
 }
+
+output "application_gateway_subnet_name" {
+  description = "Application Gateway Subnet Name: "
+  value       = azurerm_subnet.application_gateway_subnet.name
+}
+
+output "application_gateway_subnet_address_space" {
+  description = "Application Gateway Subnet Address Space: "
+  value       = azurerm_subnet.application_gateway_subnet.address_prefixes
+}
+
+output "application_gateway_subnet_id" {
+  description = "Application Gateway Subnet ID: "
+  value       = azurerm_subnet.application_gateway_subnet.id
+}

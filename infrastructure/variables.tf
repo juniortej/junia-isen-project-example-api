@@ -56,6 +56,18 @@ variable python_app_subnet_address_space {
   default     = ["192.168.2.0/24"]
 }
 
+variable application_gateway_subnet_name {
+  description = "The name of the Application Gateway subnet"
+  type        = string
+  default     = "app-gateway-subnet"
+}
+
+variable application_gateway_subnet_address_space {
+  description = "The address space that is used by the Application Gateway subnet"
+  type        = list(string)
+  default     = ["192.168.3.0/24"]
+}
+
 # Database Variables
 
 variable dns_zone_name {
@@ -92,7 +104,7 @@ variable database_name {
 variable server_name {
   description = "The name of the database server"
   type        = string
-  default     = "shop-app-atnmm-srv"
+  default     = "shop-app-atnmm-server"
 }
 
 # Blob Storage Variables
@@ -102,12 +114,38 @@ variable storage_account_name {
   default     = null
 }
 
+# Application Gateway Variables
+
+variable application_gateway_name {
+  description = "The name of the Application Gateway"
+  type        = string
+  default     = "app-gateway-atnmm"
+}
+
+variable application_gateway_sku {
+  description = "The SKU of the Application Gateway"
+  type        = string
+  default     = "Standard_v2"
+}
+
+variable application_gateway_capacity {
+  description = "The capacity of the Application Gateway"
+  type        = number
+  default     = 2
+}
+
+variable application_gateway_frontend_ip_configuration {
+  description = "The frontend IP configuration for the Application Gateway"
+  type        = string
+  default     = "app-gateway-frontend-ip"
+}
+
 # App Service Variables
 
 variable app_service_name {
   description = "The name of the App Service"
   type        = string
-  default     = "bondon-grousseau-mallet-plot-python-app-service"
+  default     = "atnmm-app-service"
 }
 
 variable app_service_plan_name {
@@ -119,6 +157,6 @@ variable app_service_plan_name {
 
 locals {
   blob_storage = {
-    name = "blobstorageatnmm"
+    name = "blobstoragejsonatnmm"
   }
 }

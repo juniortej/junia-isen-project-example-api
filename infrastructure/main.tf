@@ -26,6 +26,9 @@ module "virtual_network" {
 
   python_app_subnet_name        = var.python_app_subnet_name
   python_app_subnet_address_space = var.python_app_subnet_address_space
+  
+  application_gateway_subnet_name = var.application_gateway_subnet_name
+  application_gateway_subnet_address_space = var.application_gateway_subnet_address_space
 }
 
 module "database" {
@@ -54,6 +57,18 @@ module "blob_storage" {
   app_service_principal_id = module.app_service.principal_id
 }
 
+module "application_gateway" {
+  source                              = "./modules/application_gateway"
+  resource_group_name                 = module.resource_group.resource_group_name
+  resource_group_location             = module.resource_group.resource_group_location
+  application_gateway_name            = var.application_gateway_name
+  application_gateway_sku             = var.application_gateway_sku
+  application_gateway_capacity        = var.application_gateway_capacity
+  application_gateway_frontend_ip_configuration = var.application_gateway_frontend_ip_configuration
+  subnet_id                           = module.virtual_network.application_gateway_subnet_id
+  backend_fqdn                        = "${var.app_service_name}.azurewebsites.net"
+}
+
 module "app_service" {
   source              = "./modules/app_service"
   resource_group_name       = module.resource_group.resource_group_name
@@ -64,6 +79,7 @@ module "app_service" {
   docker_image = "mariedevulder/cloud_computing_api_project:feat-database-and-blob"
   docker_registry_url = "https://ghcr.io"
 
+  gateway_ip = module.application_gateway.public_ip_address
   subnet_id = module.virtual_network.python_app_subnet_id
 
   app_settings = {

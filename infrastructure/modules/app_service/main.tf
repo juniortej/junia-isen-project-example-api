@@ -25,6 +25,15 @@ resource "azurerm_linux_web_app" "app_service" {
       docker_registry_url = var.docker_registry_url
       docker_image_name   = var.docker_image
     }
+
+    ip_restriction {
+      name       = "Allow-Gateway-IP"
+      ip_address = "${var.gateway_ip}/32"
+      priority   = 1
+      action     = "Allow"
+    }
+
+    ip_restriction_default_action = "Deny"
   }
 
   depends_on = [ azurerm_service_plan.app_service_plan ]

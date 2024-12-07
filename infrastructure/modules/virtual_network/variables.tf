@@ -37,3 +37,13 @@ variable "python_app_subnet_address_space" {
   description = "The address space that is used by the Python app subnet"
   type        = list(string)
 }
+
+variable "application_gateway_subnet_name" {
+  description = "The name of the Application Gateway subnet"
+  type        = string
+}
+
+variable "application_gateway_subnet_address_space" {
+  description = "The address space that is used by the Application Gateway subnet"
+  type        = list(string)
+}
