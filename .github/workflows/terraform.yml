@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - master
+      - main
 
 env:
   ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
