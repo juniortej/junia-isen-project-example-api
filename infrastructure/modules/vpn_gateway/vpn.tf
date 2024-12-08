@@ -4,6 +4,8 @@ resource "azurerm_public_ip" "vpn_gateway_ip" {
   resource_group_name = var.resource_group_name
   allocation_method   = "Static"
   sku                 = "Standard"
+
+  tags = var.tags
 }
 
 resource "azurerm_virtual_network_gateway" "vpn_gateway" {
@@ -51,20 +53,20 @@ data "azurerm_virtual_network_gateway" "vpn_gateway" {
 }
 
 resource "azurerm_virtual_network_gateway_nat_rule" "vpn_nat_rule" {
-  name                       = "vpn-nat-rule-${var.unique_suffix}" 
+  name                       = "vpn-nat-rule-${var.unique_suffix}"
   resource_group_name        = var.resource_group_name
   virtual_network_gateway_id = azurerm_virtual_network_gateway.vpn_gateway.id
   mode                       = "EgressSnat"
   type                       = "Static"
-  # ip_configuration_id        = data.azurerm_virtual_network_gateway.vpn_gateway.ip_configuration[0].id
 
   external_mapping {
     address_space = var.vpn_client_address_pool[0]
-    port_range    = "200"
+    port_range    = "200-400"
   }
 
   internal_mapping {
     address_space = var.vnet_address_space[0]
-    port_range    = "400"
+    port_range    = "200-400"
   }
+  
 }

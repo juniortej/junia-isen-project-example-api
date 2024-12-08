@@ -17,3 +17,15 @@ output "postgresql_administrator_login" {
   description = "The administrator login for the PostgreSQL server"
   value       = azurerm_postgresql_flexible_server.main.administrator_login
 }
+
+output "postgresql_administrator_password" {
+  description = "The administrator password for the PostgreSQL server"
+  value       = random_password.admin_password.result
+  sensitive   = true
+}
+
+output "database_password" {
+  description = "The password for the PostgreSQL database"
+  value       = random_password.database_password.result
+  sensitive   = true
+}

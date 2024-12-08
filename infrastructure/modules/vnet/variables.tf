@@ -45,7 +45,7 @@ variable "gateway_subnet_prefix" {
 }
 
 variable "vpn_client_address_pool" {
-  description = "Address pool for VPN clients"
+  description = "List of VPN client address pools"
   type        = list(string)
 }
 

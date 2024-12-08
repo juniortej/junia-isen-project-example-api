@@ -48,14 +48,13 @@ resource "azurerm_network_security_group" "db_nsg" {
     protocol                   = "Tcp"
     source_port_range          = "*"
     destination_port_range     = "5432"
-    source_address_prefix      = var.vpn_client_address_pool[0]
-    destination_address_prefix = "*"
+    source_address_prefixes    = var.vpn_client_address_pool
+    destination_address_prefix = azurerm_subnet.db_subnet.address_prefixes
   }
 
   tags = var.tags
 }
 
-# Associate the NSG with the Database Subnet
 resource "azurerm_subnet_network_security_group_association" "db_nsg_association" {
   subnet_id                 = azurerm_subnet.db_subnet.id
   network_security_group_id = azurerm_network_security_group.db_nsg.id

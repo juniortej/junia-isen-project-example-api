@@ -1,55 +1,51 @@
-name: Terraform CI/CD
+name: Deploy Infrastructure
 
 on:
   push:
     branches:
       - main
-  pull_request:
-    branches:
-      - main
+
+env:
+  ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+  ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
+  ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+  ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
 
 jobs:
   terraform:
-    name: Validate and Deploy Terraform
+    name: Apply Terraform
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
+    - name: Checkout repository
       uses: actions/checkout@v3
 
-    - name: Install Terraform
+    - name: Setup Terraform
       uses: hashicorp/setup-terraform@v2
       with:
-        terraform_version: 1.6.0
+        terraform_version: 1.4.5
 
-    # - name: Run terraform fmt
-    #   run: terraform fmt -check -recursive
-    #   working-directory: infrastructure
-
-    - name: Run terraform validate
+    - name: Configure Azure
       run: |
+        az login --service-principal -u $ARM_CLIENT_ID -p $ARM_CLIENT_SECRET --tenant $ARM_TENANT_ID
+
+    - name: Initialize Terraform
+      run: |
+        cd infrastructure
+        terraform fmt -recursive
         terraform init
-        terraform validate
-      working-directory: infrastructure
 
-    - name: Terraform Plan
-      env:
-        TF_VAR_admin_password: ${{ secrets.ADMIN_PASSWORD }}
-        TF_VAR_admin_username: ${{ secrets.ADMIN_USERNAME }}
-        TF_VAR_database_name: ${{ secrets.DATABASE_NAME }}
-        TF_VAR_vpn_client_root_certificate_public_cert_data: ${{ secrets.VPN_CERT }}
+    - name: Validate Terraform
       run: |
-        terraform plan -out=tfplan
-      working-directory: infrastructure
+        cd infrastructure
+        terraform validate
 
-    # real deployment
-    # - name: Terraform Apply
-    #   if: github.ref == 'refs/heads/staging'
-    #   env:
-    #     TF_VAR_admin_password: ${{ secrets.ADMIN_PASSWORD }}
-    #     TF_VAR_admin_username: ${{ secrets.ADMIN_USERNAME }}
-    #     TF_VAR_database_name: ${{ secrets.DATABASE_NAME }}
-    #     TF_VAR_vpn_client_root_certificate_public_cert_data: ${{ secrets.VPN_CERT }}
-    #   run: |
-    #     terraform apply -auto-approve
-    #   working-directory: infrastructure
+    - name: Plan Infrastructure
+      run: |
+        cd infrastructure
+        terraform plan -out=tfplan
+
+    - name: Apply Infrastructure
+      run: |
+        cd infrastructure
+        terraform apply -auto-approve tfplan

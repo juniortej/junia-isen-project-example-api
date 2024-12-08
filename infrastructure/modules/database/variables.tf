@@ -28,10 +28,9 @@ variable "admin_username" {
   type        = string
 }
 
-variable "admin_password" {
-  description = "Administrator password for PostgreSQL server"
+variable "key_vault_id" {
+  description = "The ID of the Key Vault"
   type        = string
-  sensitive   = true
 }
 
 variable "subnet_id" {

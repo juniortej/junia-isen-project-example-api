@@ -1,5 +1,5 @@
 output "resource_group_name" {
-  description = "The name of the Resource Group"
+  description = "The name of the Resource Group for the core infrastructure"
   value       = azurerm_resource_group.main.name
 }
 
@@ -46,4 +46,14 @@ output "postgresql_administrator_login" {
 output "vpn_gateway_public_ip" {
   description = "The public IP address of the VPN Gateway"
   value       = module.vpn_gateway.vpn_gateway_public_ip
+}
+
+output "key_vault_id" {
+  description = "The ID of the Key Vault"
+  value       = module.key_vault.key_vault_id
+}
+
+output "key_vault_name" {
+  description = "The name of the Key Vault"
+  value       = module.key_vault.key_vault_name
 }
