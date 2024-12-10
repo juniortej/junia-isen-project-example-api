@@ -8,55 +8,41 @@ resource "azurerm_resource_group" "rg" {
   location = var.location
 }
 
-# App Service Plan for Linux (Docker)
-resource "azurerm_app_service_plan" "asp" {
-  name                = "${var.prefix}-appserviceplan"
-  location            = azurerm_resource_group.rg.location
+# App Service Plan
+module "app_service" {
+  source = "./modules/app_service"
+  prefix = var.prefix
   resource_group_name = azurerm_resource_group.rg.name
-  kind                = "Linux"
-  reserved            = true
-
-  sku {
-    tier = "Basic"
-    size = "B1"
-  }
+  location = azurerm_resource_group.rg.location
 }
 
-# Azure Container Registry (ACR)
-resource "azurerm_container_registry" "acr" {
-  name                     = "${replace(var.prefix, "/[^a-zA-Z0-9]/", "")}acr"
-  location                 = azurerm_resource_group.rg.location
-  resource_group_name      = azurerm_resource_group.rg.name
-  sku                      = "Basic"
-  admin_enabled            = true
-}
-
-# App Service with Docker Image from ACR
-resource "azurerm_app_service" "app" {
-  name                = "${var.prefix}-flask-app"
-  location            = azurerm_resource_group.rg.location
+# Azure SQL Database
+module "database" {
+  source = "./modules/database"
+  sql_server_name = var.sql_server_name
+  sql_database_name = var.sql_database_name
+  admin_username = var.admin_username
+  admin_password = var.admin_password
   resource_group_name = azurerm_resource_group.rg.name
-  app_service_plan_id = azurerm_app_service_plan.asp.id
-
-  site_config {
-    linux_fx_version = "DOCKER|${azurerm_container_registry.acr.login_server}/${var.prefix}:latest"
-  }
-
-  app_settings = {
-    "WEBSITES_ENABLE_APP_SERVICE_STORAGE" = "false"
-    "DOCKER_REGISTRY_SERVER_URL"          = azurerm_container_registry.acr.login_server
-    "DOCKER_REGISTRY_SERVER_USERNAME"     = azurerm_container_registry.acr.admin_username
-    "DOCKER_REGISTRY_SERVER_PASSWORD"     = azurerm_container_registry.acr.admin_password
-  }
+  location = azurerm_resource_group.rg.location
 }
 
-# Output for container registry login server and App Service URL
-output "acr_login_server" {
-  description = "Login server URL for the Azure Container Registry"
-  value       = azurerm_container_registry.acr.login_server
+# Azure Blob Storage
+module "storage" {
+  source = "./modules/storage"
+  storage_account_name = var.storage_account_name
+  resource_group_name = azurerm_resource_group.rg.name
+  location = azurerm_resource_group.rg.location
 }
 
 output "app_service_url" {
-  description = "URL of the deployed Azure App Service"
-  value       = azurerm_app_service.app.default_site_hostname
+  value = module.app_service.app_service_url
+}
+
+output "sql_server_fqdn" {
+  value = module.database.sql_server_fqdn
+}
+
+output "storage_account_name" {
+  value = module.storage.storage_account_name
 }

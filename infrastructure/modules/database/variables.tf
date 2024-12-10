@@ -7,21 +7,17 @@ variable "sql_database_name" {
 }
 
 variable "admin_username" {
-  description = "Admin username for the SQL Server"
+  description = "SQL Server admin username"
 }
 
 variable "admin_password" {
-  description = "Admin password for the SQL Server"
-}
-
-variable "sql_sku_name" {
-  description = "SKU Name for the SQL Database"
+  description = "SQL Server admin password"
 }
 
 variable "resource_group_name" {
-  description = "Azure Resource Group for the SQL Database"
+  description = "Resource group name"
 }
 
 variable "location" {
-  description = "Location for the SQL Database"
+  description = "Location for the database"
 }

@@ -1,13 +1,9 @@
 variable "storage_account_name" {
-  description = "Name of the Azure Storage account"
-}
-
-variable "container_name" {
-  description = "Name of the container within the storage account"
+  description = "Name of the Storage Account"
 }
 
 variable "resource_group_name" {
-  description = "Resource group for the storage account"
+  description = "Resource group name"
 }
 
 variable "location" {

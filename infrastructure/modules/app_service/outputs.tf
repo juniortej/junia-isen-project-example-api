@@ -1,4 +1,8 @@
 output "app_service_url" {
-  description = "The default URL of the App Service"
-  value       = azurerm_app_service.module_example.default_site_hostname
+  description = "URL of the App Service"
+  value       = azurerm_app_service.app.default_site_hostname
+}
+output "acr_login_server" {
+  description = "Login server URL for the Azure Container Registry"
+  value       = azurerm_container_registry.acr.login_server
 }

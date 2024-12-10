@@ -1,15 +1,11 @@
-variable "app_service_name" {
-  description = "Name of the App Service"
-}
-
-variable "location" {
-  description = "Location for the App Service"
+variable "prefix" {
+  description = "Prefix for naming resources"
 }
 
 variable "resource_group_name" {
-  description = "Resource group name for the App Service"
+  description = "Resource group name"
 }
 
-variable "app_service_plan_id" {
-  description = "ID of the App Service Plan"
+variable "location" {
+  description = "Location for resources"
 }
