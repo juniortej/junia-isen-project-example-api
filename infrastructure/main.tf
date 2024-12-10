@@ -8,41 +8,33 @@ resource "azurerm_resource_group" "rg" {
   location = var.location
 }
 
-# App Service Plan
 module "app_service" {
-  source = "./modules/app_service"
-  prefix = var.prefix
+  source              = "./modules/app_service"
   resource_group_name = azurerm_resource_group.rg.name
-  location = azurerm_resource_group.rg.location
+  location            = azurerm_resource_group.rg.location
+  prefix              = var.prefix
 }
 
-# Azure SQL Database
 module "database" {
-  source = "./modules/database"
-  sql_server_name = var.sql_server_name
-  sql_database_name = var.sql_database_name
-  admin_username = var.admin_username
-  admin_password = var.admin_password
+  source              = "./modules/database"
   resource_group_name = azurerm_resource_group.rg.name
-  location = azurerm_resource_group.rg.location
+  location            = azurerm_resource_group.rg.location
+  sql_server_name     = var.sql_server_name
+  sql_database_name   = var.sql_database_name
+  admin_username      = var.admin_username
+  admin_password      = var.admin_password
 }
 
-# Azure Blob Storage
 module "storage" {
-  source = "./modules/storage"
-  storage_account_name = var.storage_account_name
+  source              = "./modules/storage"
   resource_group_name = azurerm_resource_group.rg.name
-  location = azurerm_resource_group.rg.location
+  location            = azurerm_resource_group.rg.location
+  storage_account_name = var.storage_account_name
 }
 
-output "app_service_url" {
-  value = module.app_service.app_service_url
-}
-
-output "sql_server_fqdn" {
-  value = module.database.sql_server_fqdn
-}
-
-output "storage_account_name" {
-  value = module.storage.storage_account_name
+module "network" {
+  source              = "./modules/network"
+  resource_group_name = azurerm_resource_group.rg.name
+  location            = azurerm_resource_group.rg.location
+  prefix              = var.prefix
 }

@@ -11,14 +11,6 @@ resource "azurerm_app_service_plan" "asp" {
   }
 }
 
-resource "azurerm_container_registry" "acr" {
-  name                = "${replace(var.prefix, "/[^a-zA-Z0-9]/", "")}acr"
-  location            = var.location
-  resource_group_name = var.resource_group_name
-  sku                 = "Basic"
-  admin_enabled       = true
-}
-
 resource "azurerm_app_service" "app" {
   name                = "${var.prefix}-flask-app"
   location            = var.location
@@ -35,4 +27,20 @@ resource "azurerm_app_service" "app" {
     "DOCKER_REGISTRY_SERVER_USERNAME"     = azurerm_container_registry.acr.admin_username
     "DOCKER_REGISTRY_SERVER_PASSWORD"     = azurerm_container_registry.acr.admin_password
   }
+}
+
+resource "azurerm_container_registry" "acr" {
+  name                     = "${replace(var.prefix, "/[^a-zA-Z0-9]/", "")}acr"
+  location                 = var.location
+  resource_group_name      = var.resource_group_name
+  sku                      = "Basic"
+  admin_enabled            = true
+}
+
+output "app_service_name" {
+  value = azurerm_app_service.app.name
+}
+
+output "app_service_url" {
+  value = azurerm_app_service.app.default_site_hostname
 }
