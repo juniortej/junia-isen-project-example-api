@@ -25,8 +25,8 @@ CORS(app)
 
 # Configuration des limiteurs
 limiter = Limiter(
-    app,
-    key_func=get_remote_address,
+    get_remote_address,
+    app=app,
     default_limits=["20 per minute"],
     storage_uri="memory://",
 )
