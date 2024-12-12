@@ -1,29 +1,11 @@
-variable "prefix" {
-  description = "Prefix for resource names"
-  type        = string
+variable "resource_group_name" {
+  default = "rg" # Name of the Resource Group
 }
 
 variable "location" {
-  description = "The location of the resources"
-  type        = string
-}
-
-variable "resource_group_name" {
-  description = "The name of the resource group"
-  type        = string
+  default = "France Central" # Set to France Central
 }
 
 variable "prefix" {
-  description = "Prefix for resource names"
-  type        = string
-}
-
-variable "location" {
-  description = "The location of the resources"
-  type        = string
-}
-
-variable "resource_group_name" {
-  description = "The name of the resource group"
-  type        = string
+  default = "flask-api" # Prefix for resource names
 }

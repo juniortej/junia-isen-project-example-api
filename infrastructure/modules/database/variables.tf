@@ -1,23 +1,27 @@
-variable "sql_server_name" {
-  description = "Name of the SQL Server"
-}
-
-variable "sql_database_name" {
-  description = "Name of the SQL Database"
-}
-
-variable "admin_username" {
-  description = "SQL Server admin username"
-}
-
-variable "admin_password" {
-  description = "SQL Server admin password"
-}
-
 variable "resource_group_name" {
-  description = "Resource group name"
+  default = "rg" # Name of the Resource Group
 }
 
 variable "location" {
-  description = "Location for the database"
+  default = "France Central" # Set to France Central
+}
+
+variable "sql_server_name" {
+  description = "The name of the SQL server"
+  type        = string
+}
+
+variable "sql_database_name" {
+  description = "The name of the SQL database"
+  type        = string
+}
+
+variable "admin_username" {
+  description = "The admin username for the SQL server"
+  type        = string
+}
+
+variable "admin_password" {
+  description = "The admin password for the SQL server"
+  type        = string
 }

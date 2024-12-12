@@ -1,22 +1,16 @@
-resource "azurerm_app_service_plan" "asp" {
+resource "azurerm_service_plan" "asp" {
   name                = "${var.prefix}-appserviceplan"
   location            = var.location
   resource_group_name = var.resource_group_name
-  kind                = "Linux"
-  reserved            = true
-
-  sku {
-    tier = "Basic"
-    size = "B1"
-  }
+  os_type = "Linux"
+  sku_name = "B1"
 }
 
-resource "azurerm_app_service" "app" {
+resource "azurerm_linux_web_app" "app" {
   name                = "${var.prefix}-flask-app"
   location            = var.location
   resource_group_name = var.resource_group_name
-  app_service_plan_id = azurerm_app_service_plan.asp.id
-
+  service_plan_id = azurerm_service_plan.asp.id
   site_config {
     linux_fx_version = "DOCKER|${azurerm_container_registry.acr.login_server}/${var.prefix}:latest"
   }
@@ -37,10 +31,3 @@ resource "azurerm_container_registry" "acr" {
   admin_enabled            = true
 }
 
-output "app_service_name" {
-  value = azurerm_app_service.app.name
-}
-
-output "app_service_url" {
-  value = azurerm_app_service.app.default_site_hostname
-}

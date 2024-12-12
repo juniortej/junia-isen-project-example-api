@@ -1,6 +1,6 @@
 provider "azurerm" {
   features {}
-  subscription_id = "9e01d033-be6a-400c-91a9-6376a10e4f16"
+  subscription_id = "8695039e-5771-4111-ace7-db81228d3f22"
 }
 
 resource "azurerm_resource_group" "rg" {
@@ -23,6 +23,7 @@ module "database" {
   sql_database_name   = var.sql_database_name
   admin_username      = var.admin_username
   admin_password      = var.admin_password
+
 }
 
 module "storage" {
@@ -30,6 +31,10 @@ module "storage" {
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location
   storage_account_name = var.storage_account_name
+  storage_container_name = var.storage_container_name
+  storage_blob_name  = var.storage_blob_name
+  storage_blob_source  = var.storage_blob_source
+  
 }
 
 module "network" {

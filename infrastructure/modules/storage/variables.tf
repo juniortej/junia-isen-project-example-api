@@ -1,11 +1,27 @@
-variable "storage_account_name" {
-  description = "Name of the Storage Account"
-}
-
 variable "resource_group_name" {
-  description = "Resource group name"
+  default = "rg" # Name of the Resource Group
 }
 
 variable "location" {
-  description = "Location for the storage account"
+  default = "France Central" # Set to France Central
+}
+
+variable "storage_account_name" {
+  description = "The name of the storage account"
+  type        = string
+}
+
+variable "storage_container_name" {
+  description = "The name of the storage container"
+  type        = string
+}
+
+variable "storage_blob_name" {
+  description = "The name of the storage blob"
+  type        = string
+}
+
+variable "storage_blob_source" {
+  description = "The source file for the storage blob"
+  type        = string
 }

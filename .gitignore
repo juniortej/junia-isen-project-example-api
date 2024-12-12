@@ -1,0 +1,86 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Environment variables
+.env
+*.env
+**/.venv
+
+# Flask cache and session files
+instance/
+*.sqlite3
+*.db
+
+# Logs
+*.log
+*.out
+*.err
+
+# Virtual environments
+venv/
+ENV/
+.env/
+.env.bak/
+env.bak/
+venv.bak/
+
+# Test coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+
+# PyInstaller
+*.spec
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# PyCharm
+.idea/
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# VSCode settings
+.vscode/
+
+# Other IDEs
+*.iml
+*.sublime-project
+*.sublime-workspace
+
+# Custom user uploads
+uploads/
+
+# Local deployment files
+*.local
+*.pid
+
+# Build files
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# pipenv
+Pipfile.lock
+
+# Flask specific files
+instance/
+
+# ignore every pyc file
+*.pyc

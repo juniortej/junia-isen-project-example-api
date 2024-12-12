@@ -1,4 +1,4 @@
-resource "azurerm_postgresql_server" "db" {
+resource "azurerm_postgresql_server" "postgresql_server" {
   name                = var.sql_server_name
   location            = var.location
   resource_group_name = var.resource_group_name
@@ -10,14 +10,11 @@ resource "azurerm_postgresql_server" "db" {
   ssl_enforcement_enabled = true
 }
 
-resource "azurerm_postgresql_database" "db" {
+resource "azurerm_postgresql_database" "postgresql_database" {
   name                = var.sql_database_name
   resource_group_name = var.resource_group_name
-  server_name         = azurerm_postgresql_server.db.name
+  server_name         = azurerm_postgresql_server.postgresql_server.name
   charset             = "UTF8"
   collation           = "en_US.UTF8"
 }
 
-output "database_name" {
-  value = azurerm_postgresql_database.db.name
-}

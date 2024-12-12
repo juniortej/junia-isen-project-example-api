@@ -1,0 +1,2 @@
+# ignore every pyc file
+api/tests/__pycache__/test_users.cpython-312-pytest-7.4.0.pyc

@@ -1,9 +1,9 @@
 import pytest
 from app import app
 from models.database import db
-from models.user import User
-from models.basket import Basket
-from models.order import Order
+from models.users import User
+from models.baskets import Basket
+from models.orders import Order
 
 @pytest.fixture
 def client():
