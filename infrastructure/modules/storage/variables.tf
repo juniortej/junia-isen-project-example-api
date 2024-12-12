@@ -9,19 +9,23 @@ variable "location" {
 variable "storage_account_name" {
   description = "The name of the storage account"
   type        = string
+  default="tacticalnuze"
 }
 
 variable "storage_container_name" {
   description = "The name of the storage container"
   type        = string
+  default="tacticalnuze"
 }
 
 variable "storage_blob_name" {
   description = "The name of the storage blob"
   type        = string
+  default="tacticalnuze"
 }
 
 variable "storage_blob_source" {
   description = "The source file for the storage blob"
   type        = string
+  default="tacticalnuze"
 }

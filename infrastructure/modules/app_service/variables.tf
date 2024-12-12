@@ -7,5 +7,5 @@ variable "location" {
 }
 
 variable "prefix" {
-  default = "flask-api" # Prefix for resource names
+  default = "flaskapi70513152252625265" # Prefix for resource names
 }
