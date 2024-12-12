@@ -1,7 +1,7 @@
-name: build app
+name: Build App
 
 env: 
-  AZURE_APP_SERVICE_NAME: bondon-grousseau-mallet-plot-python-app-service
+  AZURE_APP_SERVICE_NAME: atnmm-app-service
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
 
