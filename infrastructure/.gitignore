@@ -1,0 +1,23 @@
+# Terraform state files
+*.tfstate
+*.tfstate.backup
+
+# Crash logs
+crash.log
+
+# Ignore override files as they are for local configuration only
+*.tfvars
+*.tfvars.json
+
+# Terraform provider plugins (locally installed binaries)
+.terraform/
+
+# Terraform plan files
+*.tfplan
+
+# Sensitive credentials files
+*.tfvars
+
+# Local directories and metadata
+.terraform.lock.hcl
+*.terraform.tfstate.d
