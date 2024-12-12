@@ -76,7 +76,7 @@ module "app_service" {
   app_service_name = var.app_service_name
   app_service_plan_name = var.app_service_plan_name
 
-  docker_image = "mariedevulder/cloud_computing_api_project:develop"
+  docker_image = "mariedevulder/cloud_computing_api_project:main"
   docker_registry_url = "https://ghcr.io"
 
   gateway_ip = module.application_gateway.public_ip_address
