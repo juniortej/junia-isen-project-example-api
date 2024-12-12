@@ -18,14 +18,14 @@ output "postgresql_administrator_login" {
   value       = azurerm_postgresql_flexible_server.main.administrator_login
 }
 
-output "postgresql_administrator_password" {
+output "postgresql_admin_password" {
   description = "The administrator password for the PostgreSQL server"
-  value       = random_password.admin_password.result
+  value       = var.admin_password
   sensitive   = true
 }
 
 output "database_password" {
   description = "The password for the PostgreSQL database"
-  value       = random_password.database_password.result
+  value       = var.database_password
   sensitive   = true
 }

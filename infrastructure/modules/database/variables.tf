@@ -28,22 +28,29 @@ variable "admin_username" {
   type        = string
 }
 
-variable "key_vault_id" {
-  description = "The ID of the Key Vault"
-  type        = string
-}
-
 variable "subnet_id" {
   description = "ID of the subnet where the database will be deployed"
   type        = string
 }
 
 variable "private_dns_zone_id" {
-  description = "ID of the private DNS zone for the database"
+  description = "The ID of the Private DNS Zone for PostgreSQL Flexible Server."
   type        = string
 }
 
 variable "environment" {
   description = "Environment tag (e.g., dev, staging, prod)"
   type        = string
+}
+
+variable "admin_password" {
+  description = "Administrator password for PostgreSQL server"
+  type        = string
+  sensitive   = true
+}
+
+variable "database_password" {
+  description = "Password for the PostgreSQL database"
+  type        = string
+  sensitive   = true
 }

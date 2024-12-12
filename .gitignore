@@ -39,6 +39,7 @@ __pycache__/
 .venv/
 env/
 venv/
+.env.info
 
 .dockerignore
 docker-compose.override.yml
@@ -72,3 +73,5 @@ docker-compose.override.yaml
 *.dll
 *.so
 *.dylib
+
+tmp/tfplan

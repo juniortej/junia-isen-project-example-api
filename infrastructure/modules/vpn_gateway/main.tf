@@ -47,11 +47,6 @@ resource "azurerm_virtual_network_gateway" "vpn_gateway" {
   tags = var.tags
 }
 
-data "azurerm_virtual_network_gateway" "vpn_gateway" {
-  name                = azurerm_virtual_network_gateway.vpn_gateway.name
-  resource_group_name = azurerm_virtual_network_gateway.vpn_gateway.resource_group_name
-}
-
 resource "azurerm_virtual_network_gateway_nat_rule" "vpn_nat_rule" {
   name                       = "vpn-nat-rule-${var.unique_suffix}"
   resource_group_name        = var.resource_group_name
@@ -61,12 +56,11 @@ resource "azurerm_virtual_network_gateway_nat_rule" "vpn_nat_rule" {
 
   external_mapping {
     address_space = var.vpn_client_address_pool[0]
-    port_range    = "200-400"
+    port_range    = "200"
   }
 
   internal_mapping {
     address_space = var.vnet_address_space[0]
-    port_range    = "200-400"
+    port_range    = "400"
   }
-  
 }
