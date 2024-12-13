@@ -1,7 +1,7 @@
 name: Build App
 
 env: 
-  AZURE_APP_SERVICE_NAME: atnmm-app-service
+  AZURE_APP_SERVICE_NAME: atnmm-app-service-isenm2cloudproject
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
 
