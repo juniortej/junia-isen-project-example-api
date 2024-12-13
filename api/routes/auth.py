@@ -1,24 +1,28 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, redirect, url_for, render_template
 from models.users import User
 from werkzeug.security import generate_password_hash, check_password_hash
 
 auth_bp = Blueprint('auth', __name__)
 
-@auth_bp.route('/auth/register', methods=['POST'])
+@auth_bp.route('/auth/register', methods=['GET', 'POST'])
 def register():
-    data = request.json
-    hashed_password = generate_password_hash(data['password'], method='sha256')
+    if request.method == 'POST':
+        data = request.form
+        hashed_password = generate_password_hash(data['password'], method='sha256')
 
-    user = User(username=data['username'], password=hashed_password, role="customer")
-    user.save()
+        user = User(username=data['username'], password=hashed_password, role="customer")
+        user.save()
 
-    return jsonify({"message": "User registered successfully"}), 201
+        return redirect(url_for('home'))
+    return render_template('register.html')
 
-@auth_bp.route('/auth/login', methods=['POST'])
+@auth_bp.route('/auth/login', methods=['GET', 'POST'])
 def login():
-    data = request.json
-    user = User.query.filter_by(username=data['username']).first()
+    if request.method == 'POST':
+        data = request.form
+        user = User.query.filter_by(username=data['username']).first()
 
-    if user and check_password_hash(user.password, data['password']):
-        return jsonify({"message": "Login successful"}), 200
-    return jsonify({"error": "Invalid credentials"}), 401
+        if user and check_password_hash(user.password, data['password']):
+            return redirect(url_for('home'))
+        return jsonify({"error": "Invalid credentials"}), 401
+    return render_template('login.html')

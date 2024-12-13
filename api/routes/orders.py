@@ -6,7 +6,6 @@ from models.database import db
 
 orders_bp = Blueprint('orders', __name__)
 
-# View orders for a customer
 @orders_bp.route('/orders', methods=['GET'])
 def view_orders():
     user_id = request.args.get('user_id')  
@@ -15,7 +14,6 @@ def view_orders():
         return jsonify({"message": "No orders found"}), 404
     return jsonify([order.to_dict() for order in orders]), 200
 
-# Place a new order (assuming it's from the user's basket)
 @orders_bp.route('/orders', methods=['POST'])
 def place_order():
     data = request.json
@@ -25,10 +23,3 @@ def place_order():
         return jsonify({"error": "Basket is empty"}), 400
 
     new_order = Order(user_id=user_id, items=basket_items)
-    new_order.save()
-
-    # Clear the basket after order placement
-    Basket.query.filter_by(user_id=user_id).delete()
-    db.session.commit()
-
-    return jsonify({"message": "Order placed successfully", "order_id": new_order.id}), 201

@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Profile</title>
+</head>
+<body>
+    <h1>Profile</h1>
+    <form action="/profile" method="post">
+        <input type="hidden" name="user_id" value="{{ user.id }}">
+        <input type="text" name="username" placeholder="Username" value="{{ user.username }}" required>
+        <input type="password" name="password" placeholder="New Password">
+        <button type="submit">Update Profile</button>
+    </form>
+    <a href="/">Back to Home</a>
+</body>
+</html>

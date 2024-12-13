@@ -6,7 +6,7 @@ basket_bp = Blueprint('basket', __name__)
 
 @basket_bp.route('/basket/add', methods=['POST'])
 def add_to_basket():
-    data = request.json
+    data = request.form
     product = Product.query.get(data['product_id'])
     if not product:
         return jsonify({"error": "Product not found"}), 404
@@ -16,7 +16,7 @@ def add_to_basket():
         basket = Basket(user_id=data['user_id'], items=f"{data['product_id']}:{data['quantity']}")
     else:
         items = dict(item.split(':') for item in basket.items.split(','))
-        items[data['product_id']] = str(int(items.get(data['product_id'], 0)) + data['quantity'])
+        items[data['product_id']] = str(int(items.get(data['product_id'], 0)) + int(data['quantity']))
         basket.items = ','.join(f"{k}:{v}" for k, v in items.items())
     
     basket.save()

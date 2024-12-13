@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, render_template
 from routes.products import products_bp
 from routes.baskets import basket_bp
 from routes.auth import auth_bp
@@ -17,6 +17,10 @@ app.register_blueprint(auth_bp)
 app.register_blueprint(profile_bp)
 app.register_blueprint(orders_bp)
 app.register_blueprint(admin_bp)
+
+@app.route('/')
+def home():
+    return render_template('home.html')
 
 if __name__ == "__main__":
     app.run(debug=True)

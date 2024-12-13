@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, jsonify, request, render_template
 from models.products import Product
 
 products_bp = Blueprint('products', __name__)
@@ -15,4 +15,4 @@ def get_products():
         query = query.filter_by(category=category)
     
     products = query.all()
-    return jsonify([product.to_dict() for product in products]), 200
+    return render_template('products.html', products=products)
