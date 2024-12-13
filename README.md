@@ -8,7 +8,7 @@ Ce projet est une API python déployée sur Azure en utilisant Terraform.
 - Marie DEVULDER
 - Nicolas GROUSSEAU
 - Alexis MALLET
-- Mathilde RIGAUT
+- Mathilde RIGAUD
 
 Dans le cadre du cours de Cloud Computing à JUNIA ISEN M2 sous la supervision de Junior TAGNE
 
@@ -36,16 +36,22 @@ L'API permet de gérer des produits, des utilisateurs et des paniers. Voici les 
 Le code Terraform est divisé en différents modules :
 
 ##### Resource Group
+Ce module crée un groupe de ressources Azure pour contenir toutes les ressources nécessaires à l'application. Il définit le nom et l'emplacement du groupe de ressources.
 
 ##### Virtual Network
+Ce module configure un réseau virtuel (VNet) pour permettre la communication sécurisée entre les différentes ressources de l'application. Il inclut la création de sous-réseaux et la configuration des règles de sécurité réseau.
 
 ##### App Service
+Ce module déploie l'API Flask sur Azure App Service, fournissant une plateforme d'hébergement web scalable et managée. Il configure les paramètres de l'application, tels que les variables d'environnement et les paramètres de déploiement.
 
 ##### Database
+Ce module crée une base de données Azure SQL pour stocker les données des produits, des utilisateurs et des paniers. Il configure le serveur SQL, la base de données et les règles de pare-feu pour permettre l'accès sécurisé.
 
 ##### Blob Storage
+Ce module configure un compte de stockage Azure Blob pour stocker des fichiers et des objets volumineux. Il définit les conteneurs de stockage et les règles d'accès.
 
 ##### Application Gateway
+Ce module déploie une passerelle d'application Azure pour gérer le trafic entrant et assurer la répartition de charge et la sécurité. Il configure les règles de routage, les certificats SSL et les paramètres de sécurité.
 
 ##### Terraform Tests
 
@@ -82,6 +88,8 @@ Si ```terraform apply``` a déjà été appliquée alors détruire les resources
 
 
 ### Prérequis
+- Python 3.8 et +
+- Flask
 - Terraform 
 - Un compte Azure
 
