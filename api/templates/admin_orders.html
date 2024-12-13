@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>View Orders</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="/">Online Shop</a>
+        <div class="collapse navbar-collapse justify-content-end">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="/auth/logout">Logout</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    <div class="container mt-5">
+        <h1 class="text-center">View Orders</h1>
+        <form action="/admin/orders" method="get" class="mt-4">
+            <div class="form-group">
+                <label for="user_id">Filter by User ID</label>
+                <input type="number" class="form-control" id="user_id" name="user_id" placeholder="User ID">
+            </div>
+            <button type="submit" class="btn btn-primary">Filter Orders</button>
+        </form>
+        <div class="mt-4">
+            <!-- Orders will be displayed here -->
+        </div>
+    </div>
+</body>
+</html>
