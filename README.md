@@ -49,6 +49,38 @@ Le code Terraform est divisé en différents modules :
 
 ##### Terraform Tests
 
+Le fichier `module_testing.tftest.hcl` situé dans le dossier `tests` contient les tests pour vérifier la création et la configuration des ressources Azure. Voici les différents tests effectués :
+| Test  | Principe          | 
+| :--------------- |:---------------| 
+| **input_validation**          |   Vérifie la validation des entrées avec la commande `plan`.          |
+| **setup_resource_group**      |   Applique la configuration pour créer le groupe de ressources.       |  
+| **test_virtual_network**      |   Vérifie la création du réseau virtuel.                              |  
+| **test_database**            |   Vérifie la création de la base de données.                          |
+| **test_blob_storage**         |      Vérifie la création du compte de stockage Blob.                  |
+| **test_application_gateway**  | Vérifie la création de l'Application Gateway.                         |
+| **test_app_service**          |   Vérifie la création du service d'application.                       |
+
+Chaque test utilise des assertions pour s'assurer que les ressources sont correctement créées et configurées. Par exemple, le test `test_virtual_network` vérifie que l'ID du réseau virtuel est disponible, sinon il affiche un message d'erreur "Virtual network not created".
+
+
+
+
+Comment appliquer les tests :
+
+Si ```terraform apply``` a déjà été appliquée alors détruire les resources existantes avec la commande :
+```terraform destroy```
+1. Se rendre dans le dossier 
+```infrastructure/```
+2. Insérer votre ```subscription_id``` à la ligne 4 du fichier ```module_testing.tftest.hcl```
+3. Initialiser Terraform avec la commande :
+```terraform init```
+4. Lancer les tests avec la commande :
+```terraform test```
+5. Détruire les ressources, une fois tous les tests passés, avec la commande :
+```terraform destroy```
+
+
+
 ### Prérequis
 - Terraform 
 - Un compte Azure

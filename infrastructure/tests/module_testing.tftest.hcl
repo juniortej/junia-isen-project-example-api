@@ -87,11 +87,3 @@ run "test_app_service" {
     error_message = "App service not created"
   }
 }
-
-run "e2e_tests" {
-  command = apply
-
-  variables {
-    resource_group_name = "shop-app-atnmm"
-  }
-}
