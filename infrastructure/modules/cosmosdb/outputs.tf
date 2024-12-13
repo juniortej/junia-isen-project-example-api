@@ -6,15 +6,15 @@ output "cosmosdb_endpoint" {
 
 # Clé primaire pour authentifier les requêtes sur CosmosDB
 output "cosmosdb_primary_key" {
+  value       = data.azurerm_cosmosdb_account.shop_app_keys.primary_key
   description = "Clé primaire du compte CosmosDB"
-  value       = azurerm_cosmosdb_account.shop_app_cosmosdb.primary_master_key
   sensitive   = true
 }
 
 # Clé secondaire pour authentifier les requêtes sur CosmosDB
 output "cosmosdb_secondary_key" {
+  value       = data.azurerm_cosmosdb_account.shop_app_keys.secondary_key
   description = "Clé secondaire du compte CosmosDB"
-  value       = azurerm_cosmosdb_account.shop_app_cosmosdb.secondary_master_key
   sensitive   = true
 }
 

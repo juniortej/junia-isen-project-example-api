@@ -29,7 +29,7 @@ resource "azurerm_cosmosdb_account" "shop_app_cosmosdb" {
   is_virtual_network_filter_enabled = true
 
   # Autoriser uniquement les connexions provenant de cette plage IP
-  ip_range_filter = ["0.0.0.0"]
+  ip_range_filter = "0.0.0.0"
 
   consistency_policy {
     consistency_level       = "Session"
