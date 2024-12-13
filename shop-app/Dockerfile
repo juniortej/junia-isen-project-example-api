@@ -1,4 +1,5 @@
-FROM golang:1.23
+# Build the Go app
+FROM golang:1.23 AS builder
 
 WORKDIR /app
 
@@ -7,18 +8,17 @@ RUN go mod download
 
 COPY . .
 
-RUN CGO_ENABLED=0 GOOS=linux go build -o backend
+RUN CGO_ENABLED=0 GOOS=linux go build -o backend .
 
-# Create a clean image for production
+# Build the final image
 FROM alpine:latest
 
 RUN apk --no-cache add ca-certificates
 
 WORKDIR /root/
 
-COPY --from=builder /app/main .
-
+COPY --from=builder /app/backend .
 
 EXPOSE 8080
 
-CMD ["gow", "run", "."]
+CMD ["./backend"]

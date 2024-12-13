@@ -3,22 +3,22 @@ package controllers
 import (
 	"net/http"
 	"time"
+	"os"
 
+	"github.com/Amiche02/junia-isen-project-example-api/shop-app/database"
+	"github.com/Amiche02/junia-isen-project-example-api/shop-app/models"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/bcrypt"
 )
 
-// SecretKey for signing JWT tokens
-var SecretKey = "your-secret-key"
-
-// In-memory database simulation
-var users = map[string]string{}
+var SecretKey = os.Getenv("JWT_SECRET")
 
 // Register endpoint for user registration
 func Register(c *gin.Context) {
 	var body struct {
-		Username string `json:"username"`
+		Name     string `json:"name"`
+		Email    string `json:"email"`
 		Password string `json:"password"`
 	}
 
@@ -27,9 +27,10 @@ func Register(c *gin.Context) {
 		return
 	}
 
-	// Check if username already exists
-	if _, exists := users[body.Username]; exists {
-		c.JSON(http.StatusConflict, gin.H{"error": "Username already exists"})
+	// Check if email already exists
+	var existingUser models.User
+	if err := database.GlobalDb.Where("email = ?", body.Email).First(&existingUser).Error; err == nil {
+		c.JSON(http.StatusConflict, gin.H{"error": "Email already exists"})
 		return
 	}
 
@@ -40,15 +41,23 @@ func Register(c *gin.Context) {
 		return
 	}
 
-	// Save the user
-	users[body.Username] = string(hashedPassword)
+	// Create the user in the database
+	user := models.User{
+		Name:     body.Name,
+		Email:    body.Email,
+		Password: string(hashedPassword),
+	}
+	if err := database.GlobalDb.Create(&user).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Could not create user in database"})
+		return
+	}
+
 	c.JSON(http.StatusCreated, gin.H{"message": "User registered successfully"})
 }
 
-// Login endpoint for user authentication
 func Login(c *gin.Context) {
 	var body struct {
-		Username string `json:"username"`
+		Email    string `json:"email"`
 		Password string `json:"password"`
 	}
 
@@ -58,21 +67,21 @@ func Login(c *gin.Context) {
 	}
 
 	// Check if the user exists
-	hashedPassword, exists := users[body.Username]
-	if !exists {
+	var user models.User
+	if err := database.GlobalDb.Where("email = ?", body.Email).First(&user).Error; err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid credentials"})
 		return
 	}
 
 	// Compare the password
-	if err := bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(body.Password)); err != nil {
+	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(body.Password)); err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid credentials"})
 		return
 	}
 
 	// Generate JWT token
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"username": body.Username,
+		"username": body.Email,
 		"exp":      time.Now().Add(24 * time.Hour).Unix(), // Token expiration time
 	})
 

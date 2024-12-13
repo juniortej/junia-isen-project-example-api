@@ -4,12 +4,10 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/Amiche02/junia-isen-project-example-api/shop-app/api/controllers"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 )
-
-// SecretKey for signing JWT tokens
-var SecretKey = "your-secret-key"
 
 // AuthMiddleware checks for a valid JWT token in the request
 func AuthMiddleware() gin.HandlerFunc {
@@ -30,7 +28,7 @@ func AuthMiddleware() gin.HandlerFunc {
 			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 				return nil, jwt.ErrSignatureInvalid
 			}
-			return []byte(SecretKey), nil
+			return []byte(controllers.SecretKey), nil
 		})
 
 		if err != nil || !token.Valid {
