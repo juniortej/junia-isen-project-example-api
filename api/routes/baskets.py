@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify
 from models.baskets import Basket
 from models.products import Product
-
+from models.database import db
 basket_bp = Blueprint('basket', __name__)
 
 @basket_bp.route('/basket/add', methods=['POST'])
