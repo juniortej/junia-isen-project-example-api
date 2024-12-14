@@ -26,7 +26,7 @@ ENV_FILE="$SCRIPT_DIR/../.env"
 if [[ -f "$ENV_FILE" ]]; then
   echo "🔗 Sourcing environment variables from $ENV_FILE"
   set -a
-  source "$ENV_FILE"  # This will source and load the values from the .env file
+  source "$ENV_FILE"  
   set +a
 else
   echo "❌ .env file not found at $ENV_FILE. Please ensure it exists and contains the necessary variables."
@@ -102,6 +102,7 @@ echo "📋 Running 'terraform plan' to preview the changes in the core directory
 terraform -chdir="$CORE_DIR" plan \
   -var "developer_object_id=$DEVELOPER_SP_OBJECT_ID" \
   -var "owner_object_id=$OWNER_SP_OBJECT_ID" \
+  -var "context_access_token=$GITHUB_TOKEN" \
   -out="$PLAN_FILE"
 
 echo "⚡ Applying the Terraform configuration for core infrastructure... (Only type 'yes' to approve)"

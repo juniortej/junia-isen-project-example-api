@@ -6,24 +6,26 @@ on:
       - main
       - master
 
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  ARM_CLIENT_ID: ${{ secrets.AZURE_OWNER_SP_APP_ID }}
+  ARM_CLIENT_SECRET: ${{ secrets.AZURE_OWNER_SP_PASSWORD }}
+  ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+  ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+
+  CONTEXT_ACCESS_TOKEN: ${{ secrets.CONTEXT_ACCESS_TOKEN }}
+  TF_VAR_context_access_token: ${{ secrets.CONTEXT_ACCESS_TOKEN }}
+  TF_VAR_developer_object_id: ${{ secrets.AZURE_DEVELOPER_SP_OBJECT_ID }}
+  TF_VAR_owner_object_id: ${{ secrets.AZURE_OWNER_SP_OBJECT_ID }}
+
+
 jobs:
   terraform:
-    name: "Terraform Plan and Apply"
+    name: "Azure SP Login Test"
     runs-on: ubuntu-latest
-
-    env:
-      ARM_CLIENT_ID: ${{ secrets.AZURE_OWNER_SP_APP_ID }}
-      ARM_CLIENT_SECRET: ${{ secrets.AZURE_OWNER_SP_PASSWORD }}
-      ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-      ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
-      CONTEXT_ACCESS_TOKEN: ${{ secrets.CONTEXT_ACCESS_TOKEN }}
-      TF_VAR_context_access_token: ${{ secrets.CONTEXT_ACCESS_TOKEN }}
-      TF_VAR_developer_object_id: ${{ secrets.AZURE_DEVELOPER_SP_OBJECT_ID }}
-      TF_VAR_owner_object_id: ${{ secrets.AZURE_OWNER_SP_OBJECT_ID }}
-
-    permissions:
-      contents: write
-      issues: write  
 
     steps:
     - name: Checkout Repository
@@ -35,41 +37,11 @@ jobs:
     - name: Authenticate with Azure
       uses: azure/login@v1
       with:
-        creds: |
-          {
-            "clientId": "${{ secrets.AZURE_OWNER_SP_APP_ID }}",
-            "clientSecret": "${{ secrets.AZURE_OWNER_SP_PASSWORD }}",
-            "subscriptionId": "${{ secrets.AZURE_SUBSCRIPTION_ID }}",
-            "tenantId": "${{ secrets.AZURE_TENANT_ID }}"
-          }
+        client-id: ${{ secrets.AZURE_OWNER_SP_APP_ID }}
+        client-secret: ${{ secrets.AZURE_OWNER_SP_PASSWORD }}
+        tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
-    - name: Setup Terraform
-      uses: hashicorp/setup-terraform@v2
-      with:
-        terraform_version: 1.5.5
-
-    - name: Terraform Init
-      run: terraform init
-
-    - name: Terraform Fmt
-      run: terraform fmt -check
-
-    - name: Terraform Validate
-      run: terraform validate
-
-    - name: Terraform Plan
-      run: terraform plan -var="context_access_token=${{ secrets.CONTEXT_ACCESS_TOKEN }}" -var="developer_object_id=${{secrets.TF_VAR_developer_object_id}}" -var="owner_object_id=${{secrets.TF_VAR_owner_object_id}}" -out=tfplan
-
-    - name: Terraform Apply
-      run: terraform apply -var="context_access_token=${{ secrets.CONTEXT_ACCESS_TOKEN }}" -var="developer_object_id=${{secrets.TF_VAR_developer_object_id}}" -var="owner_object_id=${{secrets.TF_VAR_owner_object_id}}" -auto-approve tfplan
-
-    - name: Commit State File Back to GitHub
-      if: always()
+    - name: Verify Azure Account
       run: |
-        git config --global user.name "GitHub Actions Bot"
-        git config --global user.email "github-actions[bot]@users.noreply.github.com"
-        git add .
-        git commit -m "Update Terraform state files"
-        git push origin master  # Replace 'master' with 'main' if that's your default branch
-      env:
-        GITHUB_PAT: ${{ secrets.PAT_TERRAFORM_DEPLOY }}
+        az account show
