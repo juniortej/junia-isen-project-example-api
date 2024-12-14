@@ -45,3 +45,18 @@ jobs:
     - name: Verify Azure Account
       run: |
         az account show
+
+
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v2
+      with:
+        terraform_version: 1.5.5
+
+    - name: Terraform Init
+      run: terraform init
+
+    - name: Terraform Fmt
+      run: terraform fmt -check
+
+    - name: Terraform Validate
+      run: terraform validate
