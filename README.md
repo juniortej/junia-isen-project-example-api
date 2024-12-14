@@ -122,9 +122,25 @@ Si ```terraform apply``` a déjà été appliquée alors détruire les resources
 4. Créer un fichier `terraform.tfvars` et y renseigner les variables suivantes :
     ```
     subscription_id = "ID de l'abonnement Azure"
+    new_relic_license_key = "Clée de license New Relic"
     ```
 5. Appliquer les changements avec la commande `terraform apply`
 6. Dans l'output de la commande, récupérer l'IP publique de l'application gateway et se rendre sur l'URL `http://<IP_PUBLIQUE>/` pour accéder à l'API.
+
+### Monitoring
+
+Pour surveiller les ressources de l'application, New Relic est utilisé. Les étapes suivantes doivent être suivies pour configurer le monitoring :
+
+1. Créer un compte sur [New Relic](https://newrelic.com/).
+2. Une fois connecté, générer une clé de licence New Relic.
+3. Ajouter cette clé de licence dans le fichier `terraform.tfvars` à la ligne suivante :
+    ```
+    new_relic_license_key = "Clée de license New Relic"
+    ```
+4. Appliquer les changements avec la commande `terraform apply`.
+
+Une fois ces étapes complétées, les ressources de l'application pourront être surveillées sur le site de New Relic.
+
 
 ### Github Actions
 
