@@ -37,6 +37,7 @@ variable "app_service_name" {
 variable "container_image_name" {
   description = "The full name of the Docker image (e.g., 'nginx', 'myregistry.azurecr.io/myapp')."
   type        = string
+  default = "shop-app"
 }
 
 variable "container_image_tag" {

@@ -19,10 +19,13 @@ jobs:
       ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
       ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
       CONTEXT_ACCESS_TOKEN: ${{ secrets.CONTEXT_ACCESS_TOKEN }}
+      TF_VAR_context_access_token: ${{ secrets.CONTEXT_ACCESS_TOKEN }}
+      TF_VAR_developer_object_id: ${{ secrets.AZURE_DEVELOPER_SP_OBJECT_ID }}
+      TF_VAR_owner_object_id: ${{ secrets.AZURE_OWNER_SP_OBJECT_ID }}
 
     permissions:
       contents: read
-      issues: write  # Remove if not needed
+      issues: write 
 
     steps:
     - name: Checkout Repository
@@ -60,7 +63,7 @@ jobs:
 
     - name: Terraform Destroy
       if: github.event.inputs.confirm_destroy == 'DESTROY'
-      run: terraform destroy -var="context_access_token=${{ secrets.CONTEXT_ACCESS_TOKEN }}" -auto-approve
+      run: terraform destroy -var="context_access_token=${{ secrets.CONTEXT_ACCESS_TOKEN }}" -var="developer_object_id=${{ secrets.AZURE_DEVELOPER_SP_OBJECT_ID }}" -var="owner_object_id=${{ secrets.AZURE_OWNER_SP_OBJECT_ID }}" -auto-approve
 
     # Optional: Notify upon destruction
     - name: Notify Destruction Completion
