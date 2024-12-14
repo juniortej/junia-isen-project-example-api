@@ -11,7 +11,9 @@ resource "azurerm_linux_web_app" "app_service" {
   location            = var.resource_group_location
   resource_group_name = var.resource_group_name
   service_plan_id = azurerm_service_plan.app_service_plan.id
-  app_settings        = var.app_settings
+  app_settings = merge(var.app_settings, {
+    "NEW_RELIC_LICENSE_KEY" = var.new_relic_license_key
+  })
 
   virtual_network_subnet_id = var.subnet_id
 

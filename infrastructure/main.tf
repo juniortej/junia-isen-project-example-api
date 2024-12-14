@@ -91,4 +91,6 @@ module "app_service" {
     DATABASE_USERNAME = module.database.db_admin_username
     DATABASE_PASSWORD = module.database.db_admin_password
   }
+
+  new_relic_license_key = var.new_relic_license_key
 }

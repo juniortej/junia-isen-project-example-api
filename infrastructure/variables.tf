@@ -154,6 +154,10 @@ variable app_service_plan_name {
   default     = "python-app-service-plan"
 }
 
+variable "new_relic_license_key" {
+  description = "The New Relic license key to use for monitoring"
+  type        = string
+}
 
 locals {
   blob_storage = {

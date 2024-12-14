@@ -44,3 +44,8 @@ variable "docker_registry_url" {
   type = string
   default = "https://index.docker.io"
 }
+
+variable "new_relic_license_key" {
+  description = "The New Relic license key to use for monitoring"
+  type        = string
+}
