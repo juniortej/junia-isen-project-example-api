@@ -2,19 +2,19 @@ services:
   backend:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.prod
     container_name: shop-app-backend
     restart: always
-    ports:
-      - "8080:8080"
+    network_mode: "host"
     environment:
       AZURE_POSTGRES_USER: ${AZURE_POSTGRES_USER}
       AZURE_POSTGRES_PASSWORD: ${AZURE_POSTGRES_PASSWORD}
       AZURE_POSTGRES_DB: ${AZURE_POSTGRES_DB}
       AZURE_POSTGRES_HOST: ${AZURE_POSTGRES_HOST}
-      AZURE_POSTGRES_PORT: 5432
-      DB_CONNECTION_TYPE: azure
+      AZURE_POSTGRES_PORT: ${AZURE_POSTGRES_PORT}
+      DB_CONNECTION_TYPE: ${DB_CONNECTION_TYPE}
       JWT_SECRET: ${JWT_SECRET}
+      VPN_GATEWAY_PUBLIC_IP: ${VPN_GATEWAY_PUBLIC_IP}
     networks:
       - app_network
 

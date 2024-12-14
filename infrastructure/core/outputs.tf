@@ -52,3 +52,7 @@ output "app_service_default_hostname" {
 output "app_service_url" {
   value = module.app_service.app_service_url
 }
+
+output "acr_login_server" {
+  value = azurerm_container_registry.main.login_server
+}

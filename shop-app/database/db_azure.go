@@ -11,11 +11,17 @@ import (
 )
 
 func ConnectAzureDB() *gorm.DB {
+
 	dbuser := os.Getenv("AZURE_POSTGRES_USER")
 	dbpwd := os.Getenv("AZURE_POSTGRES_PASSWORD")
 	dbhost := os.Getenv("AZURE_POSTGRES_HOST")
 	dbport := os.Getenv("AZURE_POSTGRES_PORT")
 	dbname := os.Getenv("AZURE_POSTGRES_DB")
+
+	vpnGateway := os.Getenv("VPN_GATEWAY_PUBLIC_IP")
+	if vpnGateway != "" {
+		log.Printf("ℹ️ VPN Gateway detected: %s. Ensure VPN connection is active if required.", vpnGateway)
+	}
 
 	dsn := fmt.Sprintf(
 		"host=%s user=%s password=%s dbname=%s port=%s sslmode=require TimeZone=Europe/Paris",

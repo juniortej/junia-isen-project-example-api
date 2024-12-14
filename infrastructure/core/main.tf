@@ -1,5 +1,3 @@
-# infrastructure/core/main.tf
-
 data "azurerm_client_config" "current" {}
 
 # Generate a random suffix for naming resources
@@ -192,6 +190,11 @@ resource "azurerm_container_registry_task" "main" {
   }
 }
 
+data "azurerm_container_registry" "acr" {
+  name                = azurerm_container_registry.main.name
+  resource_group_name = azurerm_resource_group.base.name
+}
+
 module "app_service" {
   source               = "../modules/app_service"
   resource_group_name  = azurerm_resource_group.base.name
@@ -206,17 +209,17 @@ module "app_service" {
   container_image_tag  = "latest"
 
   env_vars = {
-    AZURE_POSTGRES_USER            = module.database.postgresql_administrator_login
-    AZURE_POSTGRES_PASSWORD        = module.database.postgresql_admin_password
-    AZURE_POSTGRES_DB              = module.database.postgresql_database_name
-    AZURE_POSTGRES_HOST            = module.database.postgresql_server_fqdn
-    AZURE_POSTGRES_PORT            = "5432"
-    DB_CONNECTION_TYPE             = "azure"
-    JWT_SECRET                     = random_password.jwt_secret.result
+    AZURE_POSTGRES_USER     = module.database.postgresql_administrator_login
+    AZURE_POSTGRES_PASSWORD = module.database.postgresql_admin_password
+    AZURE_POSTGRES_DB       = module.database.postgresql_database_name
+    AZURE_POSTGRES_HOST     = module.database.postgresql_server_fqdn
+    AZURE_POSTGRES_PORT     = "5432"
+    DB_CONNECTION_TYPE      = "azure"
+    JWT_SECRET              = random_password.jwt_secret.result
     # ACR creds so the app can pull the image
-    DOCKER_REGISTRY_SERVER_URL     = "https://${azurerm_container_registry.main.login_server}"
-    DOCKER_REGISTRY_SERVER_USERNAME= data.azurerm_container_registry.acr.admin_username
-    DOCKER_REGISTRY_SERVER_PASSWORD= data.azurerm_container_registry.acr.admin_password
+    DOCKER_REGISTRY_SERVER_URL      = azurerm_container_registry.main.login_server
+    DOCKER_REGISTRY_SERVER_USERNAME = data.azurerm_container_registry.acr.admin_username
+    DOCKER_REGISTRY_SERVER_PASSWORD = data.azurerm_container_registry.acr.admin_password
   }
 
   depends_on = [azurerm_container_registry_task.main]

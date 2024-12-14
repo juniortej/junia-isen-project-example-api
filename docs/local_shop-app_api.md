@@ -1,214 +1,197 @@
----
-# 📘 **Shop-App Documentation**
+# **Shop-App Backend Documentation**
 
-## 📋 **Table of Contents**
-1. [Overview](#overview)
-2. [Prerequisites](#prerequisites)
-3. [Installation](#installation)
-4. [Project Structure](#project-structure)
-5. [Environment Variables](#environment-variables)
-6. [Usage](#usage)
-7. [API Endpoints](#api-endpoints)
-8. [Authentication](#authentication)
-9. [Data Models](#data-models)
-10. [Scripts](#scripts)
-11. [Commands](#commands)
-12. [Contributing](#contributing)
-13. [License](#license)
+## **1. Overview**
+The **Shop-App** is a backend service for managing an e-commerce platform. It provides functionality for user authentication, item management, basket management, and more. This backend is built using **Go (Golang)** with the **Gin framework** and **GORM** as the ORM. It supports both **local PostgreSQL** and **Azure PostgreSQL** for database storage.
 
 ---
 
-## 📘 **Overview**
+## **2. Project Structure**
+The backend codebase follows a modular structure for better maintainability and scalability.
 
-The **Shop-App** is a simple e-commerce backend API built using **Golang**, **Gin**, and **PostgreSQL**. It allows users to register, login, create products, manage categories, add items to baskets, and place orders. This app follows industry best practices for JWT-based authentication and Dockerized deployments.
+```
+shop-app/
+  ├── api/
+  │   ├── controllers/        # Request controllers for routes
+  │   ├── helpers/            # Helper functions for controllers
+  │   └── middleware/         # JWT Authentication middleware
+  ├── database/
+  │   ├── db.go               # Main database connection logic
+  │   ├── db_azure.go         # Azure PostgreSQL connection logic
+  │   └── db_local.go         # Local PostgreSQL connection logic
+  ├── models/
+  │   └── models.go           # Data models (User, Basket, Item, Order, etc.)
+  ├── .env                    # Environment variables for configuration
+  ├── docker-compose.yml      # Docker Compose for local development
+  ├── docker-compose.prod.yml # Docker Compose for production (Azure PostgreSQL)
+  ├── Dockerfile              # Dockerfile for backend containerization
+  ├── main.go                 # Entry point for the Gin web server
+  └── update_jwt_secret.py    # Script to update the JWT secret in the .env file
+```
 
 ---
 
-## 📦 **Prerequisites**
+## **3. Environment Configuration**
+Environment variables are set in a `.env` file at the root of the project. You can choose between a **local PostgreSQL database** or **Azure PostgreSQL**.
 
-1. **Docker** (v20+)
-2. **Docker Compose** (v2+)
-3. **Go** (v1.23+)
-4. **PostgreSQL** (v15+)
-
----
-
-## ⚙️ **Installation**
-
-1. **Clone the repository:**
-   ```bash
-   git clone https://github.com/Amiche02/junia-isen-project-example-api.git
-   cd junia-isen-project-example-api/shop-app
-   ```
-
-2. **Generate a new JWT secret:**
+### **Generate a new JWT secret:**
    ```bash
    python3 update_jwt_secret.py
    ```
    This command will generate a secure JWT secret and automatically update the `.env` file.
 
-3. **Set up the .env file:**
-   ```bash
-   cp .env.example .env
-   ```
-   Ensure the values of **POSTGRES_USER**, **POSTGRES_PASSWORD**, and **JWT_SECRET** are properly configured.
 
-4. **Run the application using Docker Compose:**
-   ```bash
-   docker compose up --build -d
-   ```
+### **Environment Variables**
+```env
+# Database Configuration
+POSTGRES_USER=admin
+POSTGRES_PASSWORD=admin123
+POSTGRES_DB=shop_db
+DB_CONNECTION_TYPE=local   # Set to 'azure' for Azure PostgreSQL
 
-5. **Check if the containers are running:**
-   ```bash
-   docker ps
-   ```
-   You should see two containers:
-   - `shop-app-backend`
-   - `shop-app-db`
+# Backend Configuration
+POSTGRES_HOST=db
+POSTGRES_PORT=5432
 
----
-
-## 📁 **Project Structure**
-```
-shop-app/
-├── api/
-│   ├── controllers/
-│   ├── helpers/
-│   └── middleware/
-├── database/
-├── models/
-├── volumes/
-├── Dockerfile
-├── docker-compose.yml
-├── .env
-├── go.mod
-├── go.sum
-└── main.go
+# JWT Configuration
+JWT_SECRET=<Generated secret using update_jwt_secret.py>
 ```
 
----
-
-## 🌐 **Environment Variables**
-
-The app requires a `.env` file to store important configuration details. Below is an explanation of each environment variable:
-
-| **Variable**       | **Description**                       |
-|-------------------|---------------------------------------|
-| `POSTGRES_USER`    | Username for PostgreSQL database      |
-| `POSTGRES_PASSWORD`| Password for PostgreSQL database      |
-| `POSTGRES_DB`      | Name of the database                  |
-| `DB_CONNECTION_TYPE` | local or azure, depending on the setup |
-| `POSTGRES_HOST`    | Hostname for PostgreSQL (container name) |
-| `POSTGRES_PORT`    | Port to access the PostgreSQL DB      |
-| `JWT_SECRET`       | Secret key for JWT token generation   |
+> **Note**: When using Azure, you will need to set `AZURE_POSTGRES_USER`, `AZURE_POSTGRES_PASSWORD`, `AZURE_POSTGRES_DB`, and `AZURE_POSTGRES_HOST` in the `.env` file.
 
 ---
 
-## 🚀 **Usage**
+## **4. Database Setup**
 
-1. **Run the app**
-   ```bash
-   docker compose up --build -d
-   ```
+### **Local PostgreSQL**
+- The `docker-compose.yml` file will automatically set up a PostgreSQL instance for you.
 
-2. **Access the API**
-   The API will be available at: `http://localhost:8080`
-
-3. **Test the API using Postman or cURL**
-
----
-
-## 📡 **API Endpoints**
-
-### **Authentication**
-| **Method** | **Endpoint**  | **Description**         |
-|-----------|---------------|-------------------------|
-| **POST**  | `/register`    | Register a new user     |
-| **POST**  | `/login`       | Login and get JWT token |
-
-### **User Management**
-| **Method** | **Endpoint**  | **Description**         |
-|-----------|---------------|-------------------------|
-| **GET**   | `/users`       | Get all users (auth required) |
-
-### **Item Management**
-| **Method** | **Endpoint**  | **Description**         |
-|-----------|---------------|-------------------------|
-| **GET**   | `/items`       | Get all items (auth required) |
-| **GET**   | `/items/:id`   | Get an item by ID (auth required) |
-| **POST**  | `/items`       | Create a new item (auth required) |
-| **DELETE**| `/items/:id`   | Delete an item (auth required) |
-
-### **Basket Management**
-| **Method** | **Endpoint**  | **Description**         |
-|-----------|---------------|-------------------------|
-| **GET**   | `/baskets`     | Get the user's basket (auth required) |
-| **POST**  | `/baskets`     | Add an item to basket (auth required) |
-| **DELETE**| `/baskets/:item_id` | Remove an item from basket (auth required) |
+### **Azure PostgreSQL**
+1. Set up an Azure PostgreSQL instance.
+2. Set the following environment variables in `.env`:
+   ```env
+   AZURE_POSTGRES_USER=<your_azure_user>
+   AZURE_POSTGRES_PASSWORD=<your_azure_password>
+   AZURE_POSTGRES_DB=<your_azure_database_name>
+   AZURE_POSTGRES_HOST=<your_azure_host>
+   DB_CONNECTION_TYPE=azure
+   ````
 
 ---
 
-## 🔐 **Authentication**
-
-- The app uses **JWT tokens** for authentication. After logging in, you'll receive a token.
-- Add the token to the `Authorization` header for all requests.
-- Example of **Authorization header**:
-  ```
-  Authorization: Bearer <your_jwt_token>
-  ```
-
----
-
-## 🗃️ **Data Models**
-
-**User**
-```json
-{
-  "user_id": "uuid",
-  "name": "string",
-  "email": "string",
-  "password": "string"
-}
+## **5. How to Run Locally**
+### **Step 1: Clone the Repository**
+```bash
+git clone https://github.com/Amiche02/junia-isen-project-example-api
+cd junia-isen-project-example-api/shop-app
 ```
 
-**Item**
-```json
-{
-  "item_id": "uuid",
-  "name": "string",
-  "description": "string",
-  "price": "float",
-  "stock": "int",
-  "category_id": "uuid"
-}
+### **Step 2: Run Docker Compose**
+Run the following command to start the backend and database services.
+```bash
+docker-compose up --build
 ```
 
-**Basket**
-```json
-{
-  "basket_id": "uuid",
-  "user_id": "uuid"
-}
+This will:
+- Launch the backend API at **http://localhost:8080**
+- Launch a local PostgreSQL database at port **5432**
+
+> **Note**: If you want to use Azure PostgreSQL, update `docker-compose.prod.yml` with your Azure configurations and run:
+```bash
+docker-compose -f docker-compose.prod.yml up --build
 ```
+
+### **Step 3: API Documentation**
+After running the app, you can access the API at **http://localhost:8080**.
 
 ---
 
-## 📜 **Scripts**
+## **6. API Endpoints**
+Here are the main endpoints provided by the API.
 
-- **Generate a new JWT secret:**
+### **1. Health Check**
+- **Endpoint**: `GET /`
+- **Description**: Check if the API is running.
+- **Example**:
   ```bash
-  python3 update_jwt_secret.py
+  curl http://localhost:8080/
   ```
-  This script updates the `.env` file with a new `JWT_SECRET` value.
+
+### **2. User Authentication**
+
+#### **Register**
+- **Endpoint**: `POST /register`
+- **Payload**:
+  ```json
+  {
+    "name": "John Doe",
+    "email": "john@example.com",
+    "password": "password123"
+  }
+  ```
+- **Example**:
+  ```bash
+  curl -X POST http://localhost:8080/register -H 'Content-Type: application/json' \
+  -d '{"name": "John Doe", "email": "john@example.com", "password": "password123"}'
+  ```
+
+#### **Login**
+- **Endpoint**: `POST /login`
+- **Payload**:
+  ```json
+  {
+    "email": "john@example.com",
+    "password": "password123"
+  }
+  ```
+- **Example**:
+  ```bash
+  curl -X POST http://localhost:8080/login -H 'Content-Type: application/json' \
+  -d '{"email": "john@example.com", "password": "password123"}'
+  ```
 
 ---
 
-## 💻 **Commands**
+## **7. Protected Endpoints**
+> **Note**: You must include a valid JWT token in the `Authorization` header for these requests.
 
-| **Action**        | **Command**                            |
-|-------------------|---------------------------------------|
-| Generate JWT secret | `python3 update_jwt_secret.py`       |
-| Start the app     | `docker compose up --build -d`        |
-| Stop the app      | `docker compose down`                 |
-| View logs         | `docker compose logs -f`              |
+### **1. Items Management**
+- **GET /items**
+  ```bash
+  curl -H "Authorization: Bearer <token>" http://localhost:8080/items
+  ```
+- **GET /items/:id**
+  ```bash
+  curl -H "Authorization: Bearer <token>" http://localhost:8080/items/ITEM_ID
+  ```
+- **POST /items**
+  ```bash
+  curl -X POST http://localhost:8080/items -H 'Content-Type: application/json' \
+  -H "Authorization: Bearer <token>" \
+  -d '{"name": "Laptop", "description": "A gaming laptop", "price": 1000, "stock": 10, "category_name": "Electronics"}'
+  ```
+- **DELETE /items/:id**
+  ```bash
+  curl -X DELETE -H "Authorization: Bearer <token>" http://localhost:8080/items/ITEM_ID
+  ```
 
+### **2. Basket Management**
+- **GET /baskets**
+  ```bash
+  curl -H "Authorization: Bearer <token>" http://localhost:8080/baskets
+  ```
+- **POST /baskets**
+  ```bash
+  curl -X POST http://localhost:8080/baskets -H 'Content-Type: application/json' \
+  -H "Authorization: Bearer <token>" \
+  -d '{"item_id": "ITEM_ID", "quantity": 2}'
+  ```
+- **DELETE /baskets/:item_id**
+  ```bash
+  curl -X DELETE -H "Authorization: Bearer <token>" http://localhost:8080/baskets/ITEM_ID
+  ```
+
+---
+
+## **8. Notes**
+- Ensure you run `update_jwt_secret.py` to set a secure JWT secret.
+- Always use HTTPS in production to secure token transmission.

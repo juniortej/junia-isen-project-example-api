@@ -8,6 +8,7 @@ Thumbs.db
 *.tfvars
 *.tfplan
 .terraform/
+.terraform.lock.hcl
 
 *.out
 *.exe
