@@ -1,16 +1,18 @@
-name: CI/CD Deployment
+name: Terraform Destroy
 
 on:
-  push:
-    branches:
-      - main
-      - master
+  workflow_dispatch:
+    inputs:
+      confirm_destroy:
+        description: 'Type DESTROY to confirm'
+        required: true
+        default: ''
 
 jobs:
-  terraform:
-    name: "Terraform Plan and Apply"
+  destroy:
+    name: "Terraform Destroy"
     runs-on: ubuntu-latest
-    
+
     env:
       ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
       ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
@@ -19,15 +21,14 @@ jobs:
       CONTEXT_ACCESS_TOKEN: ${{ secrets.CONTEXT_ACCESS_TOKEN }}
 
     permissions:
-      contents: write
-      issues: write
+      contents: read
+      issues: write  # Remove if not needed
 
     steps:
     - name: Checkout Repository
       uses: actions/checkout@v3
       with:
         fetch-depth: 0
-        token: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Authenticate with Azure
       uses: azure/login@v1
@@ -48,17 +49,20 @@ jobs:
     - name: Terraform Init
       run: terraform init
 
-    - name: Terraform Plan
-      run: terraform plan -var="context_access_token=${{ secrets.CONTEXT_ACCESS_TOKEN }}" -out=tfplan
+    - name: Terraform Validate
+      run: terraform validate
 
-    - name: Terraform Apply
-      run: terraform apply -var="context_access_token=${{ secrets.CONTEXT_ACCESS_TOKEN }}" -auto-approve tfplan
-
-    - name: Commit State File Back to GitHub
-      if: always() 
+    - name: Confirm Destroy
+      if: github.event.inputs.confirm_destroy != 'DESTROY'
       run: |
-        git config --global user.name "GitHub Actions Bot"
-        git config --global user.email "github-actions[bot]@users.noreply.github.com"
-        git add .
-        git commit -m "Update Terraform state files"
-        git push origin main
+        echo "Confirmation string does not match. Aborting."
+        exit 1
+
+    - name: Terraform Destroy
+      if: github.event.inputs.confirm_destroy == 'DESTROY'
+      run: terraform destroy -var="context_access_token=${{ secrets.CONTEXT_ACCESS_TOKEN }}" -auto-approve
+
+    # Optional: Notify upon destruction
+    - name: Notify Destruction Completion
+      if: success()
+      uses: some/notification-action@v1

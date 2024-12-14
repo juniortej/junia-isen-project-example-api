@@ -1,3 +1,5 @@
+# infrastructure/core/main.tf
+
 data "azurerm_client_config" "current" {}
 
 # Generate a random suffix for naming resources
@@ -46,8 +48,6 @@ resource "tls_self_signed_cert" "root_cert" {
   allowed_uses          = ["cert_signing", "key_encipherment", "digital_signature"]
 }
 
-# Invoke Modules
-
 # VNet Module
 module "vnet" {
   source                  = "../modules/vnet"
@@ -55,7 +55,7 @@ module "vnet" {
   unique_suffix           = random_string.resource_suffix.result
   resource_group_name     = azurerm_resource_group.base.name
   environment             = "dev"
-  project_name            = "juniashop"
+  project_name            = var.project_name
   address_space           = ["10.0.0.0/16"]
   db_subnet_prefix        = "10.0.1.0/24"
   app_subnet_prefix       = "10.0.2.0/24"
@@ -94,7 +94,7 @@ module "database" {
   location            = var.location
   resource_group_name = azurerm_resource_group.base.name
   unique_suffix       = random_string.resource_suffix.result
-  project_name        = "juniashop"
+  project_name        = var.project_name
   database_name       = "juniadb"
   admin_username      = "adminuser"
   subnet_id           = module.vnet.db_subnet_id
@@ -110,7 +110,7 @@ module "vpn_gateway" {
   source              = "../modules/vpn_gateway"
   location            = var.location
   resource_group_name = azurerm_resource_group.base.name
-  project_name        = "juniashop"
+  project_name        = var.project_name
   unique_suffix       = random_string.resource_suffix.result
   tags = {
     Environment = "Development"
@@ -136,4 +136,73 @@ resource "azurerm_role_assignment" "developer_contributor" {
   role_definition_name = "Contributor"
   scope                = azurerm_resource_group.base.id
   principal_type       = "ServicePrincipal"
+}
+
+# Generate a random JWT secret
+resource "random_password" "jwt_secret" {
+  length  = 32
+  special = true
+}
+
+# Azure Container Registry
+resource "azurerm_container_registry" "main" {
+  name                = "${lower(var.project_name)}acr${random_string.resource_suffix.result}"
+  location            = var.location
+  resource_group_name = azurerm_resource_group.base.name
+  sku                 = "Basic"
+  admin_enabled       = true
+
+  tags = {
+    environment = "dev"
+  }
+}
+
+# Container Registry Task to build and push the image
+resource "azurerm_container_registry_task" "main" {
+  name                  = "${var.project_name}-build-task-${random_string.resource_suffix.result}"
+  container_registry_id = azurerm_container_registry.main.id
+
+  platform {
+    os           = "Linux"
+    architecture = "amd64"
+  }
+
+  docker_step {
+    dockerfile_path      = "shop-app/Dockerfile"
+    context_path         = "${var.git_repo_url}#${var.git_branch}:shop-app"
+    image_names          = ["${azurerm_container_registry.main.login_server}/shop-app:latest"]
+    push_enabled         = true
+    context_access_token = var.context_access_token
+  }
+
+  tags = {
+    environment = "dev"
+  }
+}
+
+# App Service Module
+module "app_service" {
+  source               = "../modules/app_service"
+  resource_group_name  = azurerm_resource_group.base.name
+  location             = var.location
+  project_name         = var.project_name
+  unique_suffix        = random_string.resource_suffix.result
+  environment          = "dev"
+  app_service_plan_sku = "B1"
+  app_service_name     = "juniashop-app-${random_string.resource_suffix.result}"
+
+  container_image_name = "${azurerm_container_registry.main.login_server}/shop-app"
+  container_image_tag  = "latest"
+
+  env_vars = {
+    AZURE_POSTGRES_USER     = module.database.postgresql_administrator_login
+    AZURE_POSTGRES_PASSWORD = module.database.postgresql_admin_password
+    AZURE_POSTGRES_DB       = module.database.postgresql_database_name
+    AZURE_POSTGRES_HOST     = module.database.postgresql_server_fqdn
+    AZURE_POSTGRES_PORT     = "5432"
+    DB_CONNECTION_TYPE      = "azure"
+    JWT_SECRET              = random_password.jwt_secret.result
+  }
+
+  depends_on = [azurerm_container_registry_task.main]
 }

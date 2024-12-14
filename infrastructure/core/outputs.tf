@@ -1,5 +1,3 @@
-# infrastructure/core/outputs.tf
-
 output "resource_group_name" {
   description = "The name of the Resource Group."
   value       = azurerm_resource_group.base.name
@@ -26,19 +24,31 @@ output "postgresql_administrator_login" {
   value       = module.database.postgresql_administrator_login
 }
 
-output "postgresql_admin_password" {
-  description = "The administrator password for the PostgreSQL server"
-  value       = module.database.postgresql_admin_password
-  sensitive   = true
-}
+# output "postgresql_admin_password" {
+#   description = "The administrator password for the PostgreSQL server"
+#   value       = module.database.postgresql_admin_password
+#   sensitive   = true
+# }
 
-output "database_password" {
-  description = "The password for the PostgreSQL database"
-  value       = module.database.database_password
-  sensitive   = true
-}
+# output "database_password" {
+#   description = "The password for the PostgreSQL database"
+#   value       = module.database.database_password
+#   sensitive   = true
+# }
 
 output "vpn_gateway_public_ip" {
   description = "The public IP address of the VPN Gateway"
   value       = module.vpn_gateway.vpn_gateway_public_ip
+}
+
+output "app_service_id" {
+  value = module.app_service.app_service_id
+}
+
+output "app_service_default_hostname" {
+  value = module.app_service.app_service_default_hostname
+}
+
+output "app_service_url" {
+  value = module.app_service.app_service_url
 }
