@@ -60,3 +60,8 @@ jobs:
 
     - name: Terraform Validate
       run: terraform validate
+
+    - name: Terraform Plan
+      run: terraform plan -var="context_access_token=${{ secrets.CONTEXT_ACCESS_TOKEN }}" -var="developer_object_id=${{ secrets.AZURE_DEVELOPER_SP_OBJECT_ID }}" -var="owner_object_id=${{ secrets.AZURE_OWNER_SP_OBJECT_ID }}" -out=tfplan
+
+
