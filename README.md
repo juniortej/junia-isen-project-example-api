@@ -31,29 +31,52 @@ L'API permet de gérer des produits, des utilisateurs et des paniers. Voici les 
 - `/users`: Route permettant de récupérer la liste des utilisateurs.
 - `/baskets`: Route permettant de récupérer la liste des paniers.
 
+### Shéma de l'architecture Azure
+
+Voici le schéma (réalisé à l'aide de draw.io) de l'architecture Azure déployée pour le projet :
+
+![Azure Architecture](/resources/images/cloud_computing_diagramme.jpg)
+
 ### Terraform
 
 Le code Terraform est divisé en différents modules :
 
-##### Resource Group
+#### Resource Group
 Ce module crée un groupe de ressources Azure pour contenir toutes les ressources nécessaires à l'application. Il définit le nom et l'emplacement du groupe de ressources.
 
-##### Virtual Network
-Ce module configure un réseau virtuel (VNet) pour permettre la communication sécurisée entre les différentes ressources de l'application. Il inclut la création de sous-réseaux et la configuration des règles de sécurité réseau.
+#### Virtual Network
+Ce module configure un réseau virtuel (VNet) pour permettre la communication sécurisée entre les différentes ressources de l'application. Il inclut la création de sous-réseaux et la configuration des règles de sécurité réseau. 
+Notre réseau virtuel est configuré sur une plage IP: `192.168.0.0/16`.
 
-##### App Service
-Ce module déploie l'API Flask sur Azure App Service, fournissant une plateforme d'hébergement web scalable et managée. Il configure les paramètres de l'application, tels que les variables d'environnement et les paramètres de déploiement.
+##### Sous-réseaux
 
-##### Database
-Ce module crée une base de données Azure SQL pour stocker les données des produits, des utilisateurs et des paniers. Il configure le serveur SQL, la base de données et les règles de pare-feu pour permettre l'accès sécurisé.
+Nous avons créé 3 sous-réseaux différents pour séparer les ressources de l'application :
 
-##### Blob Storage
-Ce module configure un compte de stockage Azure Blob pour stocker des fichiers et des objets volumineux. Il définit les conteneurs de stockage et les règles d'accès.
+- `database_subnet - 192.168.1.0/24`: Sous-réseau pour la base de données Azure PostgreSQL.
+- `python_app_subnet - 192.168.2.0/24`: Sous-réseau pour l'image Docker de l'API Flask et le Blob Storage.
+- `app_gateway_subnet - 192.168.3.0/24`: Sous-réseau pour l'Application Gateway de Azure.
 
-##### Application Gateway
-Ce module déploie une passerelle d'application Azure pour gérer le trafic entrant et assurer la répartition de charge et la sécurité. Il configure les règles de routage, les certificats SSL et les paramètres de sécurité.
+##### Règles de sécurité réseau
 
-##### Terraform Tests
+Par défaut, aucune donnée n'est accessible depuis l'extérieur. Nous avons configuré des règles de sécurité réseau pour permettre à certaines ressources de communiquer entre elles :
+
+- `python_app_subnet` &rarr; `database_subnet`: Autorise le trafic entre l'API Flask et la base de données.
+- `app_gateway_subnet` &rarr; `python_app_subnet`: Autorise le trafic entre l'Application Gateway et l'API Flask.
+
+#### App Service
+Ce module déploie notre image Docker de l'API Flask sur Azure App Service. Il configure les paramètres de l'application, les variables d'environnement, la gateway et les règles de pare-feu pour permettre un accès sécurisé.
+
+#### Database
+Ce module crée une base de données Azure PostgreSQL pour stocker les données des utilisateurs et des paniers. Il configure le serveur SQL, la base de données et les règles de pare-feu pour permettre l'accès sécurisé. D'autre part, un server DNS privé est configuré pour permettre la communication entre l'API Flask et la base de données.
+
+#### Blob Storage
+Ce module configure un compte de stockage Azure Blob pour stocker les informations des produits de notre application. Notre Blob est au format `JSON`.
+Nous avons fait le choix d'utiliser deux outils de stockage pour mettre en oeuvre ce que nous avons appris en cours.
+
+#### Application Gateway
+Ce module déploie une passerelle d'application Azure pour gérer le trafic entrant et assurer la répartition de charge et la sécurité. Il configure les règles de routage, une IP publique et les paramètres de sécurité.
+
+#### Terraform Tests
 
 Le fichier `module_testing.tftest.hcl` situé dans le dossier `tests` contient les tests pour vérifier la création et la configuration des ressources Azure. Voici les différents tests effectués :
 | Test  | Principe          | 
