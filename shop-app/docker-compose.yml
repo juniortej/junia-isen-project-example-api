@@ -1,0 +1,48 @@
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: shop-app-backend
+    restart: always
+    ports:
+      - "8080:8080"
+    environment:
+      LOCAL_POSTGRES_USER: ${POSTGRES_USER}
+      LOCAL_POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      LOCAL_POSTGRES_DB: ${POSTGRES_DB}
+      LOCAL_POSTGRES_HOST: db
+      LOCAL_POSTGRES_PORT: 5432
+      DB_CONNECTION_TYPE: local
+      JWT_SECRET: ${JWT_SECRET}
+    depends_on:
+      db:
+        condition: service_healthy 
+    networks:
+      - app_network
+
+  db:
+    image: postgres:15
+    container_name: shop-app-db
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - ./volumes/postgres_data:/var/lib/postgresql/data
+    networks:
+      - app_network
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+networks:
+  app_network:
+
+volumes:
+  postgres_data:

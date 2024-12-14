@@ -1,0 +1,71 @@
+name: Terraform Destroy
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm_destroy:
+        description: 'Type DESTROY to confirm'
+        required: true
+        default: ''
+
+jobs:
+  destroy:
+    name: "Terraform Destroy"
+    runs-on: ubuntu-latest
+
+    env:
+      ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+      ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
+      ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+      CONTEXT_ACCESS_TOKEN: ${{ secrets.CONTEXT_ACCESS_TOKEN }}
+      TF_VAR_context_access_token: ${{ secrets.CONTEXT_ACCESS_TOKEN }}
+      TF_VAR_developer_object_id: ${{ secrets.AZURE_DEVELOPER_SP_OBJECT_ID }}
+      TF_VAR_owner_object_id: ${{ secrets.AZURE_OWNER_SP_OBJECT_ID }}
+
+    permissions:
+      contents: read
+      issues: write 
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+
+    - name: Authenticate with Azure
+      uses: azure/login@v1
+      with:
+        creds: |
+          {
+            "clientId": "${{ secrets.AZURE_CLIENT_ID }}",
+            "clientSecret": "${{ secrets.AZURE_CLIENT_SECRET }}",
+            "subscriptionId": "${{ secrets.AZURE_SUBSCRIPTION_ID }}",
+            "tenantId": "${{ secrets.AZURE_TENANT_ID }}"
+          }
+
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v2
+      with:
+        terraform_version: 1.5.5
+
+    - name: Terraform Init
+      run: terraform init
+
+    - name: Terraform Validate
+      run: terraform validate
+
+    - name: Confirm Destroy
+      if: github.event.inputs.confirm_destroy != 'DESTROY'
+      run: |
+        echo "Confirmation string does not match. Aborting."
+        exit 1
+
+    - name: Terraform Destroy
+      if: github.event.inputs.confirm_destroy == 'DESTROY'
+      run: terraform destroy -var="context_access_token=${{ secrets.CONTEXT_ACCESS_TOKEN }}" -var="developer_object_id=${{ secrets.AZURE_DEVELOPER_SP_OBJECT_ID }}" -var="owner_object_id=${{ secrets.AZURE_OWNER_SP_OBJECT_ID }}" -auto-approve
+
+    # Optional: Notify upon destruction
+    - name: Notify Destruction Completion
+      if: success()
+      uses: some/notification-action@v1

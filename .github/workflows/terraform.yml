@@ -1,0 +1,80 @@
+name: CI/CD Deployment
+
+on:
+  push:
+    branches:
+      - main
+      - master
+
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  ARM_CLIENT_ID: ${{ secrets.AZURE_OWNER_SP_APP_ID }}
+  ARM_CLIENT_SECRET: ${{ secrets.AZURE_OWNER_SP_PASSWORD }}
+  ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+  ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+  CONTEXT_ACCESS_TOKEN: ${{ secrets.CONTEXT_ACCESS_TOKEN }}
+  TF_VAR_context_access_token: ${{ secrets.CONTEXT_ACCESS_TOKEN }}
+  TF_VAR_developer_object_id: ${{ secrets.AZURE_DEVELOPER_SP_OBJECT_ID }}
+  TF_VAR_owner_object_id: ${{ secrets.AZURE_OWNER_SP_OBJECT_ID }}
+
+jobs:
+  terraform:
+    name: "Azure SP Login Test"
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+
+    - name: Authenticate with Azure
+      uses: azure/login@v1
+      with:
+        creds: |
+          {
+            "clientId": "${{ secrets.AZURE_OWNER_SP_APP_ID }}",
+            "clientSecret": "${{ secrets.AZURE_OWNER_SP_PASSWORD }}",
+            "subscriptionId": "${{ secrets.AZURE_SUBSCRIPTION_ID }}",
+            "tenantId": "${{ secrets.AZURE_TENANT_ID }}"
+          }
+
+    - name: Verify Azure Account
+      run: |
+        az account show
+
+
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v2
+      with:
+        terraform_version: 1.5.5
+
+
+    - name: Terraform Init
+      run: terraform -chdir=infrastructure/core init
+  
+    - name: Terraform Fmt
+      run: terraform -chdir=infrastructure/core fmt -check
+  
+    - name: Terraform Validate
+      run: terraform -chdir=infrastructure/core validate
+  
+    - name: Terraform Plan
+      run: terraform -chdir=infrastructure/core plan -var="context_access_token=${{ secrets.CONTEXT_ACCESS_TOKEN }}" -var="developer_object_id=${{ secrets.AZURE_DEVELOPER_SP_OBJECT_ID }}" -var="owner_object_id=${{ secrets.AZURE_OWNER_SP_OBJECT_ID }}" -out=tfplan
+  
+    # - name: Terraform Apply
+    #   run: terraform -chdir=infrastructure/core apply -auto-approve tfplan
+
+    # - name: Commit State File Back to GitHub
+    #   if: always()
+    #   run: |
+    #     git config --global user.name "GitHub Actions Bot"
+    #     git config --global user.email "github-actions[bot]@users.noreply.github.com"
+    #     git add .
+    #     git commit -m "Update Terraform state files"
+    #     git push origin master
+    #   env:
+    #     GITHUB_PAT: ${{ secrets.CONTEXT_ACCESS_TOKEN }}
