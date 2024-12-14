@@ -99,26 +99,6 @@ else
   echo "❌ Core Terraform directory not found. Skipping Terraform destroy."
 fi
 
-# 3. Delete Service Principals
-delete_sp() {
-  local sp_app_id="$1"
-  local sp_role="$2"
-  
-  if [[ -n "$sp_app_id" ]]; then
-    echo "🗑️ Deleting Service Principal (App ID: $sp_app_id)..."
-    az ad sp delete --id "$sp_app_id"
-    echo "✅ Successfully deleted Service Principal: $sp_app_id"
-  else
-    echo "⚠️ Service Principal App ID not provided. Skipping deletion."
-  fi
-}
-
-# Delete Owner SP
-delete_sp "$OWNER_SP_APP_ID" "Owner"
-
-# Delete Developer SP
-delete_sp "$DEVELOPER_SP_APP_ID" "Developer"
-
 # ================================
 # 🎉 Final Output
 # ================================
