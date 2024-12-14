@@ -17,23 +17,20 @@ jobs:
       ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
       ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
       CONTEXT_ACCESS_TOKEN: ${{ secrets.CONTEXT_ACCESS_TOKEN }}
-      DEVELOPER_OBJECT_ID: ${{ secrets.AZURE_DEVELOPER_SP_OBJECT_ID }}
-      OWNER_OBJECT_ID: ${{ secrets.AZURE_OWNER_SP_OBJECT_ID }}
-      # Optional: Using TF_VAR_ environment variables
       TF_VAR_context_access_token: ${{ secrets.CONTEXT_ACCESS_TOKEN }}
       TF_VAR_developer_object_id: ${{ secrets.AZURE_DEVELOPER_SP_OBJECT_ID }}
       TF_VAR_owner_object_id: ${{ secrets.AZURE_OWNER_SP_OBJECT_ID }}
 
     permissions:
-      contents: write  # Required for pushing commits back
-      issues: write    # Remove if not needed
+      contents: write
+      issues: write  
 
     steps:
     - name: Checkout Repository
       uses: actions/checkout@v3
       with:
         fetch-depth: 0
-        token: ${{ secrets.PAT_TERRAFORM_DEPLOY }}
+        token: ${{ secrets.PAT_TERRAFORM_DEPLOY }} 
 
     - name: Authenticate with Azure
       uses: azure/login@v1
@@ -61,10 +58,10 @@ jobs:
       run: terraform validate
 
     - name: Terraform Plan
-      run: terraform plan -out=tfplan
+      run: terraform plan -var="context_access_token=${{ secrets.CONTEXT_ACCESS_TOKEN }}" -var="developer_object_id=${{secrets.TF_VAR_developer_object_id}}" -var="owner_object_id=${{secrets.TF_VAR_owner_object_id}}" -out=tfplan
 
     - name: Terraform Apply
-      run: terraform apply -auto-approve tfplan
+      run: terraform apply -var="context_access_token=${{ secrets.CONTEXT_ACCESS_TOKEN }}" -var="developer_object_id=${{secrets.TF_VAR_developer_object_id}}" -var="owner_object_id=${{secrets.TF_VAR_owner_object_id}}" -auto-approve tfplan
 
     - name: Commit State File Back to GitHub
       if: always()
