@@ -10,32 +10,38 @@ jobs:
   terraform:
     name: "Terraform Plan and Apply"
     runs-on: ubuntu-latest
-    
+
     env:
-      ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
-      ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
+      ARM_CLIENT_ID: ${{ secrets.AZURE_OWNER_SP_APP_ID }}
+      ARM_CLIENT_SECRET: ${{ secrets.AZURE_OWNER_SP_PASSWORD }}
       ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
       ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
       CONTEXT_ACCESS_TOKEN: ${{ secrets.CONTEXT_ACCESS_TOKEN }}
+      DEVELOPER_OBJECT_ID: ${{ secrets.AZURE_DEVELOPER_SP_OBJECT_ID }}
+      OWNER_OBJECT_ID: ${{ secrets.AZURE_OWNER_SP_OBJECT_ID }}
+      # Optional: Using TF_VAR_ environment variables
+      TF_VAR_context_access_token: ${{ secrets.CONTEXT_ACCESS_TOKEN }}
+      TF_VAR_developer_object_id: ${{ secrets.AZURE_DEVELOPER_SP_OBJECT_ID }}
+      TF_VAR_owner_object_id: ${{ secrets.AZURE_OWNER_SP_OBJECT_ID }}
 
     permissions:
-      contents: write
-      issues: write
+      contents: write  # Required for pushing commits back
+      issues: write    # Remove if not needed
 
     steps:
     - name: Checkout Repository
       uses: actions/checkout@v3
       with:
         fetch-depth: 0
-        token: ${{ secrets.GITHUB_TOKEN }}
+        token: ${{ secrets.PAT_TERRAFORM_DEPLOY }}
 
     - name: Authenticate with Azure
       uses: azure/login@v1
       with:
         creds: |
           {
-            "clientId": "${{ secrets.AZURE_CLIENT_ID }}",
-            "clientSecret": "${{ secrets.AZURE_CLIENT_SECRET }}",
+            "clientId": "${{ secrets.AZURE_OWNER_SP_APP_ID }}",
+            "clientSecret": "${{ secrets.AZURE_OWNER_SP_PASSWORD }}",
             "subscriptionId": "${{ secrets.AZURE_SUBSCRIPTION_ID }}",
             "tenantId": "${{ secrets.AZURE_TENANT_ID }}"
           }
@@ -48,17 +54,25 @@ jobs:
     - name: Terraform Init
       run: terraform init
 
+    - name: Terraform Fmt
+      run: terraform fmt -check
+
+    - name: Terraform Validate
+      run: terraform validate
+
     - name: Terraform Plan
-      run: terraform plan -var="context_access_token=${{ secrets.CONTEXT_ACCESS_TOKEN }}" -out=tfplan
+      run: terraform plan -out=tfplan
 
     - name: Terraform Apply
-      run: terraform apply -var="context_access_token=${{ secrets.CONTEXT_ACCESS_TOKEN }}" -auto-approve tfplan
+      run: terraform apply -auto-approve tfplan
 
     - name: Commit State File Back to GitHub
-      if: always() 
+      if: always()
       run: |
         git config --global user.name "GitHub Actions Bot"
         git config --global user.email "github-actions[bot]@users.noreply.github.com"
         git add .
         git commit -m "Update Terraform state files"
-        git push origin main
+        git push origin master  # Replace 'master' with 'main' if that's your default branch
+      env:
+        GITHUB_PAT: ${{ secrets.PAT_TERRAFORM_DEPLOY }}

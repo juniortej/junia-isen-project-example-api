@@ -16,16 +16,6 @@ variable "project_name" {
   default     = "juniashop"
 }
 
-variable "developer_object_id" {
-  description = "The Object ID of the Developer SP for role assignment."
-  type        = string
-}
-
-variable "owner_object_id" {
-  description = "The Object ID of the Owner SP for role assignment."
-  type        = string
-}
-
 variable "git_repo_url" {
   description = "The Git repository URL containing the shop-app and Dockerfile."
   type        = string
@@ -42,4 +32,14 @@ variable "context_access_token" {
   description = "GitHub Personal Access Token for accessing the repository."
   type        = string
   sensitive   = true
+}
+
+variable "developer_object_id" {
+  description = "The Object ID of the Developer SP for role assignment."
+  type        = string
+}
+
+variable "owner_object_id" {
+  description = "The Object ID of the Owner SP for role assignment."
+  type        = string
 }
