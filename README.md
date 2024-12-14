@@ -111,8 +111,6 @@ Si ```terraform apply``` a déjà été appliquée alors détruire les resources
 
 
 ### Prérequis
-- Python 3.8 et +
-- Flask
 - Terraform 
 - Un compte Azure
 
